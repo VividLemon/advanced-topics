@@ -32,7 +32,7 @@
 		// Use the map array method to give each employee a 5% raise
 		// console log the employees array when you are done
 
-		console.log(employees.map(employees => employees.salary * 1.05));
+		console.log(employees.map(employees => employees.salary *= 1.05));
 
 
 		console.log("Problem 3 - filter()");
@@ -46,7 +46,6 @@
 		// Then console log the total
 		
 		console.log(employees.reduce((a, b) => ({salary: a.salary + b.salary})));
-		console.log(`... with or without the salary increase?`);
 		
 		
 		console.log("Problem 5 - sort()");
