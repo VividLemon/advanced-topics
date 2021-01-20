@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Array Methods</title>
+	<script type="text/javascript">
+
+		var employees = [
+			{id:1, firstName:"Betty", lastName:"Smith", salary:55000 },
+			{id:2, firstName:"Bo", lastName:"Hansen", salary:35000 },
+			{id:3, firstName:"Chris", lastName:"Jones", salary:45000 },
+			{id:4, firstName:"John", lastName:"Ortega", salary:75000 },
+			{id:5, firstName:"Cliff", lastName:"Long", salary:65000 },
+			{id:6, firstName:"Charlie", lastName:"Green", salary:60000 },
+			{id:7, firstName:"Tom", lastName:"Black", salary:52000 },
+			{id:8, firstName:"Sara", lastName:"Gray", salary:80000 },
+			{id:9, firstName:"Lisa", lastName:"Johnson", salary:31000 },
+			{id:10, firstName:"Michelle", lastName:"Link", salary:55000 }
+		];
+		
+		// Problems
+
+		
+		console.log("Problem 1 - splice()");
+		// Use the splice array method to remove Charlie Green from the employees array
+		// console log the employees array when you are done
+
+		employees.splice(employees.findIndex(employees => employees.firstName == "Charlie" && employees.lastName == "Green"),1);
+		console.log(employees);
+
+
+		console.log("Problem 2 - map()");
+		// Use the map array method to give each employee a 5% raise
+		// console log the employees array when you are done
+
+		console.log(employees.map(employees => employees.salary * 1.05));
+
+
+		console.log("Problem 3 - filter()");
+		// Use the filter array method to create an array of all the employees whose salary is greater than $60,000
+		// Then console log the array that is returned
+
+		console.log(employees.filter(employees => employees.salary >= 60000));
+
+		console.log("Problem 4 - reduce()");
+		// Use the reduce array method to tally up the total of all employees salaries
+		// Then console log the total
+		
+		console.log(employees.reduce((a, b) => ({salary: a.salary + b.salary})));
+		console.log(`... with or without the salary increase?`);
+		
+		
+		console.log("Problem 5 - sort()");
+		// Use the sort array method to sort the employees from highest paid to lowest paid
+		// Then console log the array that is returned
+		
+		console.log(employees.sort((a, b) => a.salary - b.salary));
+	
+		
+
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>
