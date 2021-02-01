@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>SRR and Decomposition</title>
+	<meta charset="utf-8">
+	<style>
+		body{ margin: 25px; }
+		pre{
+			background-color: #333;
+			padding: 20px;
+			margin-bottom: 6px;
+			color:yellow;
+			border-radius: 12px;
+		}
+	</style>
+	<script src="js/date-utils.js"></script>
+	<script>
+
+	window.addEventListener('load', function(){
+
+		document.getElementById("btnToday").addEventListener('click', function(){
+			const yesterday = new Date(2021, 0, 31);
+			const str = dateUtils.format(yesterday);
+			console.log(str);
+		});
+
+	});
+	
+	</script>
+</head>
+<body>
+	<h1>Coding Principles</h1>
+	<h2>Decomposition and the Single Responsibility Rule</h2>
+	<p>Click the button to see today's date in a special format!</p>
+	<input type="button" id="btnToday" value="Today's Date" />
+	<h3>Part 1 - Code Review</h3>
+	<p>
+		Inspect the JavaScript code in this file, and in the <b>date-utils.js</b> file.
+		Make sure you understand it, maybe even inspect it in the debugger. 
+		<br>
+		The code uses the built-in Date object, here is an <a href="https://www.w3schools.com/jsref/jsref_obj_date.asp" target="_blank">API reference</a> that will help you answer the following questions.
+		<br>
+		Here's another resource for the <a href="https://css-tricks.com/everything-you-need-to-know-about-date-in-javascript/" target="_">Date object</a>.
+	</p>
+	<h3>Part 2 - Making Code Flexible</h3>
+	<p>
+		Is the format() method flexible?
+		Let's make it more flexible by following these documentation comments (go ahead and paste these comments above the method):
+	</p>
+	<pre>
+/**
+* Formats a date to look like this: Sunday January 11, 2018
+* @method format
+*
+* @param {Date} date
+* @return {string}
+*/
+	</pre>
+	<h3>Part 3 - Decomposing the format() method</h3>
+	<p>
+		Does the format() method adhere to the single responsibility rule?
+		How can we decompose it?
+	</p>
+	<p>
+		In order to decompose the method, paste the following method stubs into the date-utils.js file:
+	</p>
+	<pre>
+/**
+* Returns the day name for a given date.
+* @method getDayName
+* @param {Date} date
+* @return {string}
+*/
+dateUtils.getDayName = function(date){
+   
+}
+
+/**
+* Returns the month name for a given date.
+* @method getMonthName
+* @param {Date} date
+* @return {string}
+*/
+dateUtils.getMonthName = function(date){
+   
+}
+	</pre>
+	<p>
+		Now go ahead and implement the methods (according to the document comments).
+	</p>
+	<p>
+		After you implement the methods, refactor the format() method to make use of the getMonthName() and getDayName() methods.
+		Note that in order to call these methods from inside the body of the format() method, you must prefix the method name with <b>this</b>.
+		For example: <b>this.getDayName(someDateObj);</b>
+	</p>
+	<h3>Questions</h3>
+	<ol>
+		<li>
+			Explain why the changes we made to the format() method (before we decomposed it) made it more flexible.
+			<pre>
+Put your answer here.
+			</pre>
+		</li>
+		<li>
+			What is <b>decomposition</b> in programming?
+			<pre>
+Put your answer here.
+			</pre>
+		</li>
+		<li>
+			What is the <b>single responsibility rule (SRR)</b>?
+			<pre>
+Put your answer here.
+			</pre>
+		</li>
+	</ol>
+
+			
+</body>
+</html>
