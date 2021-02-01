@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>JSON Databases</title>
+	<script type="text/javascript">
+
+	const database = {
+	  "products": [
+	    { "productId": 1, "productName": "Avacado", "description": "Avacados from Peru", "price": 1.99},
+	    { "productId": 2, "productName": "Milk", "description": "Whole Milk", "price": 2.99},
+	    { "productId": 3, "productName": "PopTarts", "description": "Toaster Tarts - Chocolate Flavored", "price": 3.99}
+	  ],
+	  "customers": [
+	    { "customerId": 1, "firstName": "Steve", "lastName": "Smith", "email": "ssmith@yahoo.com"},
+	    { "customerId": 2, "firstName": "Jake", "lastName": "Delhomme", "email": "jakeD@gmail.com"},
+	    { "customerId": 3, "firstName": "Curt", "lastName": "Henning", "email": "perfect@gmail.com"}
+	  ],
+	  "purchases": [
+	    { "purchaseId": "1","customerId": 2, "date": "10/12/20", "products": [2] },
+	    { "purchaseId": "2","customerId": 3, "date": "10/13/20", "products": [1, 2] } 
+	  ]
+	};	
+
+	
+	console.log(database);
+	const customersTable = database.customers;
+	console.log(customersTable);
+
+	// Note that each purchase object has an array of products
+	// How would you deal with this in a relational database?
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

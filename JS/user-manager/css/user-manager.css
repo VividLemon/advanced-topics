@@ -1,0 +1,18 @@
+#user-list-container{
+	float:left;
+	width:200px;
+}
+
+#user-details-container{
+	float:left;
+	width: 600px;
+}
+
+#user-details-container label, input{
+	display:block;
+}
+
+#user-details-container input[type=submit], input[type=button]{
+	display: inline;
+}
+

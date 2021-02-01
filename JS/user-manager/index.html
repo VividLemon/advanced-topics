@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>User Manager (Client Side)</title>
+	<script src="js/user-manager.js"></script>
+	<link rel="stylesheet" type="text/css" href="css/user-manager.css">
+	</style>
+</head>
+<body>
+	<div id="user-list-container">
+		<h2>User List</h2>
+		<ul id="lsUserList"></ul>
+		<input type="button" id="btnAddUser" value="Add User">
+	</div>
+	<div id="user-details-container">
+		<h2>User Details</h2>
+		<form id="frmUserDetails" action="http://www.wtc-web.com/form-handler.php" method="POST">
+			<!-- This should be a hidden field, but you can set it as text so that you can see it -->
+			<input type="text" id="txtId" name="id" readonly="true">
+			<br>
+			<label for="txtFirstName">First Name:</label>
+			<input type="text" id="txtFirstName" name="firstName" />
+			<br>
+			<label for="txtLastName">Last Name:</label>
+			<input type="text" id="txtLastName" name="lastName" />
+			<br>
+			<label for="txtEmail">Email:</label>
+			<input type="text" id="txtEmail" name="email" />
+			<br>
+			<label for="txtPassword">Password:</label>
+			<input type="password" id="txtPassword" name="password" />
+			<br>
+			<label for="txtBirthDate">Birth Date:</label>
+			<input type="text" id="txtBirthDate" name="birthdate" />
+			<br>
+			<input type="submit" id="btnSubmit" name="submit button">
+			<!-- Delete button added in part 5 -->
+			<input type="button" id="btnDelete" value="Delete">
+		</form>
+	</div>
+</body>
+</html>
