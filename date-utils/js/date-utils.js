@@ -52,9 +52,7 @@ dateUtils.getMonthName = function(date){
 * @return {boolean}			True if the date is more than 18 years ago. False if not.
 */
 dateUtils.isOldEnoughToVote = function(birthDate){
-    if(typeof birthDate.getMonth !== 'function'){
-        throw new Error("Invalid argument, Date object expected")
-    }
+    if(typeof birthDate.getMonth !== 'function') throw new Error("Invalid argument, Date object expected");
     const today = new Date();
     const eighteenYearsAgo = new Date((today.getFullYear()-18), today.getMonth(), (today.getDate() +1))
     return Math.sign(eighteenYearsAgo - birthDate) == -1 ? false : true ;

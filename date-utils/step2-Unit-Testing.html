@@ -51,19 +51,19 @@ dateUtils.isOldEnoughToVote = function(birthDate){
 		<li>
 			What is <b>unit testing</b>?
 			<pre>
-Put your answer here.
+Where parts of a program/software are tested to make sure each part does what it is made to do correctly.
 			</pre>
 		</li>
 		<li>
 			Explain why decomposing functions according to the SRR principle helps to facilitate unit testing?
 			<pre>
-Put your answer here.
+It is easier to find which part requires changes. Putting everything into one function is going to cause one large error, whereas splitting it up will cause a small error with accurate messages.
 			</pre>
 		</li>
 		<li>
 			In the final unit test below, we made sure that the isOldEnough() method does not alter the argument/parameter that's passed into it. Why is this important?
 			<pre>
-Put your answer here.
+If a function alters the parameter, the original data is lost to any functions that come after it. So, one can get an incorrect answer if it is changed. 
 			</pre>
 		</li>
 	</ol>
