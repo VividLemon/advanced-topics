@@ -101,11 +101,7 @@ window.addEventListener("load", function(){
 	///////////////////////////////////////////
 
 	function getUserById(userId){
-		for(var x = 0; x < users.length; x++){
-			if(userId == users[x].id){
-				return users[x];
-			}
-		}
+		return users.find(element => element.id == userId);
 	}
 
 	list.addEventListener("click", evt => {
@@ -160,6 +156,18 @@ window.addEventListener("load", function(){
 	// PART 5 - Deleting Users
 	///////////////////////////////////////////
 
+	btnDeleteUser.addEventListener('click', () => {
+		let id = txtId.value;
+		let user = getUserById(id);
+		let r = window.confirm(`Are you sure you want to delete: ${user.firstName} ${user.lastName}?`);
+		if(r == true){
+			let indexOfUser = users.indexOf(user);
+			users.splice(indexOfUser, 1);
+			displayUserList(users);
+			clearForm();
+		}
+		
+	});
 
 
 });

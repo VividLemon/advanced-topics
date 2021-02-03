@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tests</title>
+    <script src="../user-data-access.js"></script>
+    <script>
+        var users = [
+		{id:1, firstName:"Jane", lastName:"Doe", email:"jdoe@acme.com", password:"foo", birthdate:"02/03/2001"},
+		{id:2, firstName:"Tony", lastName:"Thompsom", email:"tony@acme.com", password:"bar", birthdate:"7/3/2000"},
+		{id:3, firstName:"Jesse", lastName:"Jones", email:"jesse@acme.com", password:"bang", birthdate:"2/3/2002"}
+        ];
+        
+        let uda = new UserDataAccess(users);
+        console.log(uda);
+        console.log(uda.users);
+
+        console.log(uda.getAllUsers() === users);
+
+        let user = uda.getUserById(1);
+        console.log(users[0] === user);
+
+        console.log(uda.getMaxId());
+
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

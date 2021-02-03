@@ -57,3 +57,43 @@ dateUtils.isOldEnoughToVote = function(birthDate){
     const eighteenYearsAgo = new Date((today.getFullYear()-18), today.getMonth(), (today.getDate() +1))
     return Math.sign(eighteenYearsAgo - birthDate) == -1 ? false : true ;
 }
+
+/**
+* Converts milliseconds to days.
+* @method convertMillisecondsToDays
+*
+* @param {number} ms
+* @return {number}
+*/
+dateUtils.convertMillisecondsToDays = function(ms){
+    
+}
+
+
+/**
+* Returns the latter of two Date objects.
+* If both Date objects are storing the exact same time, then the first param is returned.
+* @method max
+*
+* @param {Date} date1
+* @param {Date} date2
+*
+* @return {Date}        Returns the latter of the two date params.
+*/
+dateUtils.max = function(date1, date2){
+    
+}
+
+/**
+* Compares two dates and determines the time difference (in days) between them.
+* @method diff
+*
+* @param {Date} date1
+* @param {Date} date2
+* 
+* @return {number}          The number of days between the two dates.
+*/
+dateUtils.diff = function(date1, date2){
+        
+}
+	
