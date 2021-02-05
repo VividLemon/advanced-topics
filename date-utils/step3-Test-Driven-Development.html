@@ -14,6 +14,7 @@
 		}
 	</style>
 	<script src="js/date-utils.js"></script>
+
 </head>
 <body>
 
@@ -69,21 +70,21 @@ dateUtils.diff = function(date1, date2){
 		<li>
 			What is <b>test-driven development</b>?
 			<pre>
-Put your answer here.
+It is the process of creating test scenarios prior to building a function. By creating these scenarios beforehand, you can test which aspect of a function fails, and fix it before releasing the function to production.
 			</pre>
 		</li>
 		<li>
 			Many of the methods in the dateUtils library are designed to throw specific errors.
 			If you are going to use a method that could potentially throw an error/exception, then what should you do to prevent your program from crashing? 
 			<pre>
-Put your answer here.
+try/catch blocks around the method.
 			</pre>
 		</li>
 		<li>
 			Unlike the methods in our dataUtils libroary, many JavaScript libraries will NOT throw errors. In fact, they will try to prevent any errors from being thrown.
 			Why do you think many JS libraries try to prevent errors from being thrown, even if the methods are not being used correctl (for example, if an invalid argrument is pass, instead of throwing an error, the method will often just fail silently)?
 			<pre>
-Put your answer here.
+If an error is thrown, it will prevent the rest of the application from progressing. This is not something you usually want in production. It leaves it onto the developer to implement their methods correctly while not throwing errors and crashing everything. 
 			</pre>
 		</li>
 	</ol>

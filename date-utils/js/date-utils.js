@@ -27,6 +27,7 @@ dateUtils.format = function(date = new Date()){
 * @return {string}
 */
 dateUtils.getDayName = function(date){
+    if(typeof date.getMonth !== 'function') throw new Error("Invalid argument, Date object expected");
     const dayNames = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
     const dayName = dayNames[date.getDay()];
     return dayName;
@@ -39,6 +40,7 @@ dateUtils.getDayName = function(date){
 * @return {string}
 */
 dateUtils.getMonthName = function(date){
+    if(typeof date.getMonth !== 'function') throw new Error("Invalid argument, Date object expected");
     const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
     const monthName = monthNames[date.getMonth()];
     return monthName;
@@ -66,7 +68,11 @@ dateUtils.isOldEnoughToVote = function(birthDate){
 * @return {number}
 */
 dateUtils.convertMillisecondsToDays = function(ms){
-    
+    if(!Number.isFinite(ms)){
+     throw new Error("Invalid argument, Number expected");
+    }else{ 
+        return (ms/1000/60/60/24);
+    }
 }
 
 
@@ -81,7 +87,8 @@ dateUtils.convertMillisecondsToDays = function(ms){
 * @return {Date}        Returns the latter of the two date params.
 */
 dateUtils.max = function(date1, date2){
-    
+    if(typeof date1.getMonth !== 'function' || typeof date2.getMonth !== 'function') throw new Error("Invalid argument, Date object expected");
+    return date2 < date1 ? date1 : date2;
 }
 
 /**
@@ -94,6 +101,9 @@ dateUtils.max = function(date1, date2){
 * @return {number}          The number of days between the two dates.
 */
 dateUtils.diff = function(date1, date2){
-        
+    if(typeof date1.getMonth !== 'function' || typeof date2.getMonth !== 'function') throw new Error("Invalid argument, Date object expected");
+    const convertedDate1 = this.convertMillisecondsToDays(date1.getTime());
+    const convertedDate2 = this.convertMillisecondsToDays(date2.getTime());
+    return Math.floor(Math.abs(convertedDate1 - convertedDate2));
 }
 	
