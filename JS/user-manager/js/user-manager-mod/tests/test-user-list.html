@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test user list</title>
+    <script src="../user-list.js"></script>
+    <script>
+        window.addEventListener('load', () => {
+            var users = [
+		{id:1, firstName:"Jane", lastName:"Doe", email:"jdoe@acme.com", password:"foo", birthdate:"02/03/2001"},
+		{id:2, firstName:"Tony", lastName:"Thompsom", email:"tony@acme.com", password:"bar", birthdate:"7/3/2000"},
+		{id:3, firstName:"Jesse", lastName:"Jones", email:"jesse@acme.com", password:"bang", birthdate:"2/3/2002"}
+        ];
+        var userList = new UserList({
+            containerSelector: "#user-list",
+            users: users
+        });
+
+        
+        });
+    </script>
+</head>
+<body>
+    <div id="user-list">
+
+    </div>
+</body>
+</html>
