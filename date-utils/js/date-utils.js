@@ -27,7 +27,7 @@ dateUtils.format = function(date = new Date()){
 * @return {string}
 */
 dateUtils.getDayName = function(date){
-    if(typeof date.getMonth !== 'function') throw new Error("Invalid argument, Date object expected");
+    if(!(date instanceof Date)) throw new Error("Invalid argument, Date object expected");
     const dayNames = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
     const dayName = dayNames[date.getDay()];
     return dayName;
@@ -40,7 +40,7 @@ dateUtils.getDayName = function(date){
 * @return {string}
 */
 dateUtils.getMonthName = function(date){
-    if(typeof date.getMonth !== 'function') throw new Error("Invalid argument, Date object expected");
+    if(!(date instanceof Date)) throw new Error("Invalid argument, Date object expected");
     const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
     const monthName = monthNames[date.getMonth()];
     return monthName;
@@ -54,7 +54,7 @@ dateUtils.getMonthName = function(date){
 * @return {boolean}			True if the date is more than 18 years ago. False if not.
 */
 dateUtils.isOldEnoughToVote = function(birthDate){
-    if(typeof birthDate.getMonth !== 'function') throw new Error("Invalid argument, Date object expected");
+    if(!(birthDate instanceof Date)) throw new Error("Invalid argument, Date object expected");
     const today = new Date();
     const eighteenYearsAgo = new Date((today.getFullYear()-18), today.getMonth(), (today.getDate() +1))
     return Math.sign(eighteenYearsAgo - birthDate) == -1 ? false : true ;
@@ -68,11 +68,8 @@ dateUtils.isOldEnoughToVote = function(birthDate){
 * @return {number}
 */
 dateUtils.convertMillisecondsToDays = function(ms){
-    if(!Number.isFinite(ms)){
-     throw new Error("Invalid argument, Number expected");
-    }else{ 
-        return (ms/1000/60/60/24);
-    }
+    if(!Number.isFinite(ms)) throw new Error("Invalid argument, Number expected"); 
+    return (ms/1000/60/60/24);
 }
 
 
@@ -87,7 +84,7 @@ dateUtils.convertMillisecondsToDays = function(ms){
 * @return {Date}        Returns the latter of the two date params.
 */
 dateUtils.max = function(date1, date2){
-    if(typeof date1.getMonth !== 'function' || typeof date2.getMonth !== 'function') throw new Error("Invalid argument, Date object expected");
+    if(!(date1 instanceof Date) || !(date2 instanceof Date)) throw new Error("Invalid argument, Date object expected");
     return date2 < date1 ? date1 : date2;
 }
 
@@ -101,7 +98,7 @@ dateUtils.max = function(date1, date2){
 * @return {number}          The number of days between the two dates.
 */
 dateUtils.diff = function(date1, date2){
-    if(typeof date1.getMonth !== 'function' || typeof date2.getMonth !== 'function') throw new Error("Invalid argument, Date object expected");
+    if(!(date1 instanceof Date) || !(date2 instanceof Date)) throw new Error("Invalid argument, Date object expected");
     const convertedDate1 = this.convertMillisecondsToDays(date1.getTime());
     const convertedDate2 = this.convertMillisecondsToDays(date2.getTime());
     return Math.floor(Math.abs(convertedDate1 - convertedDate2));
