@@ -1,0 +1,49 @@
+// SASS allows you to comment a single line with //
+
+// SASS allows you to create variables, they start with a dollar sign
+$primary: #1a237e;
+$primary-light: #534bae;
+$primary-dark: #000051;
+$primary-text: #fff;
+$secondary: #651fff;
+$secondary-light: #a255ff;
+$secondary-dark: #0100ca;
+$secondary-text: #fff;
+
+div{
+	width:80%;
+	padding: 0 10%;
+	line-height: 50px;
+	text-align:center;
+	margin-bottom: 20px;
+}
+
+#div1{
+	color: $primary-text;
+	background-color: $primary;
+}
+
+#div2{
+	color: $primary-text;
+	background-color: $primary-light;
+}
+
+#div3{
+	color: $primary-text;
+	background-color: $primary-dark;
+}
+
+#div4{
+	color: $secondary-text;
+	background-color: $secondary;
+}
+
+#div5{
+	color: $secondary-text;
+	background-color: $secondary-light;
+}
+
+#div6{
+	color: $secondary-text;
+	background-color: $secondary-dark;
+}

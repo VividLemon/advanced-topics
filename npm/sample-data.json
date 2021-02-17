@@ -1,0 +1,22 @@
+{
+	"posts":[
+		{
+			"id": 1, 
+			"title":"All About HTML",
+			"author":"Bob Smith",
+			"post":"<p class=\"some-class\">Here is the content for the post about HTML...</p>"
+		},
+		{
+			"id": 2, 
+			"title":"All About JavaScript",
+			"author":"Betty Jones",
+			"post":"<p class=\"some-class\">Here is the content for the post about JavaScript...</p>"
+		},
+		{
+			"id": 3, 
+			"title":"All About CSS",
+			"author":"Jenny James",
+			"post":"<p class=\"some-class\">Here is the content for the post about CSS...</p>"
+		}
+	]
+}
