@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Sales Data - Step 1</title>
+</head>
+<body>
+	<div id="table-container">
+		Put your table here, in this DIV
+	</div>
+	<br>
+	<br>
+	When you are done, your table should look like this:
+	<br>
+	<img src="table-step1.png" alt="sales table">
+</body>
+</html>
+<script type="text/javascript">
+
+// The following is a record of sales for a small business... 
+
+var sales = [
+	{customer:"Peter", product: "microwave", date:"07-20-2019", price: 39.99},
+	{customer:"Bob", product: "bike", date:"12-20-2020", price: 349.99},
+	{customer:"Bob", product: "tv", date:"12-20-2020", price: 199.99},
+	{customer:"Bob", product: "radio", date:"12-4-2020", price: 19.99},
+	{customer:"Sally", product: "lamp", date:"12-15-2020", price: 199.99},
+	{customer:"Sally", product: "guitar", date:"12-16-2020", price: 299.99},
+	{customer:"Gus", product: "shirt", date:"12-17-2020", price: 599.99},
+	{customer:"Gus", product: "baking pan", date:"12-13-2020", price: 19.99}
+];
+
+
+
+
+
+/*
+Implement code for the displayTable function.
+The parameter should be an array of 'sales' objects (like the one above).
+The function should display a table inside the DIV element on the page.
+The table should look like the one in the image.
+*/
+function displayTable(arSales){
+
+	// Put your code here
+	//#table-container
+	const div = document.getElementById(`table-container`);
+	const table = document.createElement("table");
+	div.appendChild(table);
+	let head = table.createTHead();
+	let row = head.insertRow();
+	Object.keys(arSales[0]).forEach(element => {
+
+	});
+	
+	for(let key of Object.keys(arSales[0])){
+		let th = document.createElement("th");
+		let text = document.createTextNode(key);
+		th.appendChild(text);
+		row.appendChild(th);
+	}
+
+
+	arSales.forEach(object => {
+		let row = table.insertRow();
+		for (const key in object) {
+			if (Object.hasOwnProperty.call(object, key)) {
+				const element = object[key];
+				let cell = row.insertCell();
+				let textNode = document.createTextNode(element);
+				cell.appendChild(textNode);
+
+			}
+		}
+	});
+
+}
+
+displayTable(sales);
+
+</script>

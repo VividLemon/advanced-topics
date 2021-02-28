@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Sales Table Step 2</title>
+</head>
+<script src="js/main-min.js" defer></script>
+<body>
+	<p>
+		Create a file named main.js and put all the JavaScript code from step 1 into it.
+		Then link this page to main.js.
+	</p>
+	<p>
+		Add JavaScript code to main.js that will allow users to choose an option from the select box to change how the rows in the table are sorted.
+		Here's how the sorting should work:
+	</p>
+	<ol>
+		<li>If the <b>price</b> option is selected, the rows should be sorted by prices (highest to lowest)</li>
+		<li>If the <b>customer</b> option is selected, the rows should be sorted by customer (alphabetically)</li>
+		<li>If the <b>product</b> option is selected, the rows should be sorted by product (alphabetically)</li>
+		<li>If the <b>date</b> option is selected, the rows should be sorted by date (the most recent dates should be displayed first)</li>
+	</ol>
+
+	<select class="sort" onchange="displayTable()">
+		<option>price</option>
+		<option>customer</option>
+		<option>product</option>
+		<option>date</option>
+	</select>
+	<div id="table-container"></div>
+</body>
+</html>
