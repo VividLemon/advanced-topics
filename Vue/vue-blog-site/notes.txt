@@ -1,0 +1,916 @@
+Before starting, make sure to install the Vetur plugin in VSCode.
+Then, when you create a new Vue component, you can use the 'vue' snippet
+
+We should discuss how this approach to building Vue apps is different than what we have done so far
+    - We spread everything out into different files (individual components go in their own files)
+    - We actually use Node.js to build our components, which means we see a lot of this:
+        import
+        exports
+    - It uses a built in web server
+    - The way that we build components looks different because NPM will compile them
+        Each component file looks like this:
+
+            <template>
+                The UI/HTML for a component goes here
+            </template>
+
+            <script>
+            export default {
+                // The code for your component goes here
+                // I believe this is the same exact object that we pass into Vue.component()
+            };
+            </script>
+
+            <style>
+                /* You can add CSS code to style your component here */
+            </style>
+
+
+### Install VueCLI
+
+First update npm:
+    npm install -g npm@latest
+
+Install the VueCLI package (globally):
+    npm i -g @vue/cli
+
+Note that if you have already installed VueCLI, you should update it like so:
+    npm update -g @vue/cli
+
+To check the version of VueCLI that you have intsalled:
+    npx vue --version
+
+The latest version as of 10/2/2020 is 4.5.6
+
+
+
+### Use VueCLI to create a new project
+
+To create a new project (this will create a folder with the name of the project):
+
+    npx vue create vue-blog-site
+
+    When the menu appears choose: Default ([Vue 2] babel, eslint)
+
+To run the project (make sure you cd into the project folder before running this command):
+
+    npm run serve
+
+To view the app running in the browser, enter this url:   
+
+    http://localhost:8080/
+
+Note that you cannot use the terminal to enter commands while your app is running.
+
+To kill the app, put your curser in the terminal and press Ctrl + C
+
+Take a look at all the files that were created for the project:
+
+    node_modules/
+	public/ - This is were the index.html page is located
+	src/ - for all of your source code
+	src/assets - images, fonts, etc (they get compiled by webpack, I think)
+	src/components - for all of your Vue components
+	src/App.vue - The root component, in which all other components are nested
+	src/main.js - renders the app and mounts it to the DOM
+    package.json
+    babel.config.js - compiles your JS code to older versions so that you can use modern JS in your source code
+
+When you are ready to go live with your app you can run this command to compile it:
+
+    npm run build
+
+Go ahead and run the command to build/compile the app and note that it creates a dist folder
+
+
+
+### Start working on the project
+
+Delete everything in the src/components folder (I think it's just HelloWorld.vue)
+
+Create a folder in the src folder named 'views'.
+This folder will contain the 'pages' for your site.
+These are really just Vue components, but they will each represent a page.
+The files that we put in the src/components folder will be the parts of a page
+
+In the src/views folder create the following files:
+    Home.vue
+    BlogPost1.vue
+    BlogPost2.vue
+
+In VSCode, use the 'vue' snippet to put the boilerplate code into each of the files you just created.
+Inside the <template> element, simply put an H1 element that indicates which page it is.
+For example:
+
+    <template>
+        <h1>Blog Post 1</h1>
+    </template>
+
+Open the App.vue file and update it to use the Home view
+Here are the changes:
+    - delete the contents of the DIV in the template and replace it with the home component: <home></home>
+    - remove the import statement (for the HelloWorld component)
+    - add an import statement for the Home component:
+        import Home from "./views/Home.vue";
+    - Register the Home component by adding it to the components property of the 'default' object
+      (and remove the HelloWorld entry)
+
+Here's what the code should look like in App.vue:
+
+<template>
+<div id="app">
+    <home></home>     <<<<<<<<< replace the content and put the Home component here
+</div>
+</template>
+
+<script>
+import Home from "./views/Home.vue";   <<<<<<< import the Home component
+
+export default {
+    name: "App",
+    components: {
+        Home,          <<<<<<< register the Home component in the app
+    },
+};
+</script>
+
+<style>
+#app {
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
+    color: #2c3e50;
+    margin-top: 60px;
+}
+</style>
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+If the app is not running, go ahead and run it, then check it out in the browser:
+
+    npm run serve
+
+
+### Using a 'Router'
+
+We'll add a feature called a Router that will control how the app navigates from page to page
+A router is not just a Vue concept, it's used by other frameworks such as Angular and React, and is also used heavily in server-side languages.
+
+Install the Vue Router package:
+
+    npm install --save vue-router
+
+In the src folder, add a file named router.js then put this code in it:
+
+
+import Vue from "vue";
+import VueRouter from "vue-router";
+import Home from "./views/Home.vue";
+import BlogPost1 from "./views/BlogPost1.vue";
+import BlogPost2 from "./views/BlogPost2.vue";
+
+Vue.use(VueRouter);
+
+const routes = [
+    { path: "/", component: Home, name: "home" },
+    { path: "/blog-post-1", component: BlogPost1, name: "post1" },
+    { path: "/blog-post-2", component: BlogPost2, name: "post2" }
+];
+
+const router = new VueRouter({
+    mode: 'history',
+    routes,
+});
+
+export default router;
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Note that you define a route for each 'page' in your site
+Also note that this is really a single page web app
+so there is really only one page, but when you click on links the router will
+change the 'page' (the components in the src/views folder)
+
+Now we'll use the router in our app.
+
+Open main.js and make the following changes:
+    -import the router.js file like so:     import router from './router'
+    -add the router to the object that is passed into the Vue constructor
+When you are done, main.js should look like this:
+
+import Vue from 'vue'
+import App from './App.vue'
+import router from './router'   <<<<<<<<<<<<<<<<<<<
+
+Vue.config.productionTip = false
+
+new Vue({
+  router,                       <<<<<<<<<<<<<<<<<<<<
+  render: h => h(App),
+}).$mount('#app')
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Now we'll update the App.vue to use the router.
+We'll update the TEMPLATE in App vue
+And we no longer need to refer to the Home view/page/component in App.vue
+(we are importing it in the router)
+
+Here's what App.vue should look like:
+
+<template>
+  <div id="app">
+    <div id="nav">
+      <router-link to="/">Home</router-link>|
+      <router-link to="/blog-post-1">Blog Post 1</router-link>
+      <router-link to="/blog-post-2">Blog Post 2</router-link>
+    </div>
+    <router-view />
+  </div>
+</template>
+
+<script>
+export default {
+  name: "App",
+};
+</script>
+
+<style>
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 60px;
+}
+</style>
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Notice that when you are using a router, you need a router-view element to display the page/view
+And you need to use router-link elements to swap out the the view/component/page that is displayed in the router-view element
+
+Run the app and keep an eye on the URL as you navigate between the pages.
+It shows the 'path' that we set for each route in the router file.
+Note that the TO attribute in the router-link tags (in App.vue) specify the path for each link.
+The router (router.js) is configured to know which component to display based on this path.
+
+
+THIS MIGHT BE A GOOD TIME TO SAVE A COPY OF THE PROJECT
+
+Note that the Vue router uses HTML5 'pushstate', which is not supported in IE10
+Also note, that the router will not work properly on your live server unless you redirect all requests to the index.html file.
+This is easily done on an Apache server, you just need to add an .htaccess file that does the redirect.
+Let me know if you want more details on that.
+
+Now let's add a 404 page to our site.
+Create a file in the src/views folder named NotFound.vue
+Then put this code in it:
+
+    <template>
+        <h1>Sorry we can't find that page</h1>
+    </template>
+
+Now, in router.js, add this object to the routes array:
+
+    { path: '*', component: NotFound }
+
+This should be the last object/element in the array.
+Note that the path uses the wild card, so the NotFound component will be displayed
+if none ot the other paths in the array are typed into the URL bar of the browser.
+
+Make sure to import the NotFound component in router.js:
+
+    import NotFound from "./views/NotFound.vue";
+
+
+Run the app to try it out:
+    npm run serve
+
+Make sure to enter a path into the URL bar that doesn't exist, you should see the NotFound component
+
+Our app works, but it's not ideal.
+We don't want to create a new view/page/component for every blog post.
+Instead we want a data driven app where a single component can display any blog post.
+
+To do this, we need to set up a DYNAMIC route.
+But first, we'll create a component that can display all of our blog posts.
+
+In the src/views folder, create a file named BlogPost.vue and put this code in it:
+
+<template>
+  <div>
+    <h1>Blog Post ID: {{ id }}</h1>
+  </div>
+</template>
+
+<script>
+    export default {
+        props: ["id"],
+    };
+</script>
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Note that it has a prop defined (named id), which is being displayed in the template.
+
+In router.js, import the BlogPost view/page/component like so:
+
+    import BlogPost from "./views/BlogPost.vue";
+
+
+
+Then add this object to the routes array (I BELIEVE IT MUST GO BEFORE THE ONE FOR THE NotFound COMPONENT):
+
+    { path: "/blog/:id", component: BlogPost, name: "blog", props: true	},
+
+Note that it has :id in the path property, and that it has a props property that is set to true
+
+Run the app and then try out these urls:
+    http://localhost:8080/blog/1
+    http://localhost:8080/blog/2
+
+The number at the end of the url will be the id of the blog post, and that will be
+passed into the BlogPost component as the id prop.
+
+Now we'll create a page/view/component that lists blog posts.
+
+Create a file in src/views named BlogList.vue and put this code in it:
+
+<template>
+  <div>
+    <router-link :to="{ name: 'blog', params: { id: 1 } }">First Blog Post</router-link>
+    <br />
+    <router-link :to="{ name: 'blog', params: { id: 2 } }">Second Blog Post</router-link>
+  </div>
+</template>
+
+<script>
+export default {};
+</script>
+
+<style>
+</style>
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Note that the router-link elements are set up a little differently here.
+We are referring to a route (in the routes array of router.js) by it's name rather then it's path
+And that we are passing an ID param as well.
+
+
+Add a route to the BlogList component in router.js. (before the last element in the routes array)
+
+    { path: "/blog/", component: BlogList, name: "blog-list" },
+
+Don't forget to import the BlogList compoent (in router.js):
+
+    import BlogList from "./views/BlogList.vue";
+
+Add a link to the BlogList page/view component to the app.
+Open App.vue and add this router-link to the template:
+
+    <router-link :to="{name: 'blog-list'}">Blog List</router-link>
+
+Note that it is referring to the route by it's name, rather than it's path.
+Using route names, rather than paths in your router-links makes it easy to update the actual path if you need to change the URLs to the pages in your app.
+
+Run the app and click on the Blog List link.
+From there you should be able to click on the links to the BlogPost component.
+
+At this time, you could remove BlogPost1.vue and BlogPost2.vue from the app.
+We no longer need them since we are now using a single component to display blog posts (BlogPost.vue).
+To remove the BlogList1 and BlogList2:
+    In router.js:
+        remove the imports for BlogPost1 and BlogPost2
+        remove the elements from the routes array that refer to BlogPost1 and BlogPost2
+    In App.vue  
+        remove the router-link elements that link to blog-post-1 and blog-post-2
+    In src/views 
+        Delete BlogPost1.vue and BlogPost2.vue
+
+
+### Creating a Data-Driven Web App
+
+Create a file in the src folder named post-data.json and paste this into it:
+
+{
+    "posts": [
+        {
+            "id": 1,
+            "title": "All About HTML",
+            "author": "Bob Smith",
+            "post": "<p class=\"some-class\">Here is the content for the post about HTML...</p>"
+        },
+        {
+            "id": 2,
+            "title": "All About JavaScript",
+            "author": "Betty Jones",
+            "post": "<p class=\"some-class\">Here is the content for the post about JavaScript...</p>"
+        },
+        {
+            "id": 3,
+            "title": "All About CSS",
+            "author": "Jenny James",
+            "post": "<p class=\"some-class\">Here is the content for the post about CSS...</p>"
+        }
+    ]
+}
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Now let's make some changes to the BlogList component to use this JSON data.
+Open BlogList.vue and do the following:
+    -import post-data.json inside the SCRIPT element like so, note that it is being imported as 'data':  
+        
+        import data from "../post-data.json";
+
+    - declare a 'posts' data item for the component by adding a data() method that looks like this:
+        Add this to the default export object:
+
+            data(){
+                return {
+                    posts: []
+                }
+            }
+
+    - add a mounted() method to the default export object, like this:
+
+        mounted() {
+            this.posts = data.posts;
+        }
+
+    - remove the router-link elements in the template and replace them with this:
+
+        <ul>
+            <li v-for="post in posts" :key="post.id">{{ post.title }}</li>
+        </ul>
+
+Here is what the BlogList.vue file should look like after you make the changes:
+
+<template>
+  <div>
+    <ul>
+      <li v-for="post in posts" :key="post.id">{{ post.title }}</li>
+    </ul>
+  </div>
+</template>
+
+<script>
+import data from "../post-data.json";
+
+export default {
+    data(){
+        return {
+            posts: []
+        }
+    },
+    mounted() {
+		this.posts = data.posts;
+	}
+};
+</script>
+
+<style>
+</style>
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Run the app and note how the blog posts from post-data.json are displayed
+And note how ugly it is, we can work on that later!
+
+Now add a router-link element to the template to navigate to an individual blog post
+Add this inside the LI element of the template, it should be put after the code that displays the post.title
+
+    <br />
+    <router-link :to="{ name: 'blog', params: { id: post.id }}">READ</router-link>
+
+
+### Update the BlogPost component
+
+In BlogPost.vue, make the following changes:
+
+Replace everything inside the template with this code:
+
+    <div>
+        <h2>{{title}}</h2>
+        <h3>{{author}}</h3>
+        <div v-html="content" class="blog-content"></div>
+        <!--NOTE: You must use the v-html directive to display HTML content-->
+    </div>
+
+Import the post-data.json file (put this in the SCRIPT element):
+
+    import data from "../post-data.json";
+
+Add this data() method under the props property in the default export object:
+
+    data() {
+        return {
+            title: "",
+            content: "",
+            author: "",
+        };
+    },
+
+Add a getPostById() method to the component, like so (remember that methods must be added to a 'methods' object):
+
+        methods: {
+            getPostById(postId) {
+                var allPosts = data.posts;
+                for (var x = 0; x < allPosts.length; x++) {
+                    if (allPosts[x].id == postId) {
+                    return allPosts[x];
+                    }
+                }
+            },
+        },
+
+Add mounted() to the component, like so (this comes after the 'methods' object, NOT in it!)
+
+    mounted() {
+        var post = this.getPostById(this.id);
+        this.title = post.title;
+        this.author = post.author;
+        this.content = post.post;
+    }
+
+The BlogPost.vue file should look like this:
+
+<template>
+<!--
+  <div>
+    <h1>Blog Post ID: {{ id }}</h1>
+  </div>
+-->
+    <div>
+        <h2>{{title}}</h2>
+        <h3>{{author}}</h3>
+        <div v-html="content" class="blog-content"></div>
+        <!--NOTE: You must use the v-html directive to display HTML content-->
+    </div>
+</template>
+
+<script>
+import data from "../post-data.json";
+export default {
+  props: ["id"],
+  data() {
+    return {
+        title: "",
+        content: "",
+        author: "",
+    };
+  },
+  methods: {
+        getPostById(postId) {
+            var allPosts = data.posts;
+            for (var x = 0; x < allPosts.length; x++) {
+                if (allPosts[x].id == postId) {
+                return allPosts[x];
+                }
+            }
+        },
+  },
+  mounted() {
+    var post = this.getPostById(this.id);
+    this.title = post.title;
+    this.author = post.author;
+    this.content = post.post;
+  }
+};
+</script>
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+/////////////////////////////////////////////////
+// BUILDING COMPONENTS
+
+Create NavBar.vue in the components folder
+Here's what the template should look like (you can leave the script and style elements untouched in the component):
+
+    <template>
+      <div id="nav">
+        <router-link to="/">Home</router-link>|
+        <router-link :to="{ name: 'blog-list' }">Blog</router-link>
+      </div>
+    </template>
+
+Make the following updates to App.vue
+1. Import the NavBar component (inside the script element):
+
+    import NavBar from "./components/NavBar.vue";
+
+2. Register the NavBar by adding a 'components' to the object, the object should look like this:
+
+    export default {
+      components: {
+        NavBar,
+      },
+      name: "App",
+    };
+
+3. Update the template to look like this (note that we are replacing the router-links with the NavBar):
+
+    <template>
+      <div id="app">
+        <NavBar />
+        <router-view />
+      </div>
+    </template>
+
+
+Run the app, you should see no changes, but inspect the app using the Vue Chrome plugin
+and you should see the structure of the components (including the NavBar)
+
+
+Create BlogListItem.vue in the components folder.
+Here's what it looks like:
+
+<template>
+  <li>
+    <b>{{ post.title }}</b>
+    <br />
+    <router-link :to="{ name: 'blog', params: { id: post.id } }"
+      >READ</router-link
+    >
+  </li>
+</template>
+
+<script>
+export default {
+  props: {
+    post: Object,
+  },
+};
+</script>
+
+<!--<style lang="scss" scoped> need to install sass-loader for this version of the style tag to work-->
+<style scoped>
+li {
+  list-style: none;
+}
+</style> 
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Now we'll use the BlogListItem component inside the BlogList view.
+Make these changes to BlogList.vue
+
+1. Import the BlogListItem:
+
+    import BlogListItem from "../components/BlogListItem.vue";
+
+2. Register the BlogListItem by adding this components property to the object:
+
+    components: {
+        BlogListItem,
+    }
+
+3. Update the template to look like this:
+
+    <template>
+      <div>
+        <ul>
+          <BlogListItem v-for="post in posts" :key="post.id" :post="post" />
+        </ul>
+      </div>
+    </template>
+
+
+Now we'll make a component to allow people to vote on blog posts
+We'll build it in pieces, starting with a simple button component
+
+Add VoteButton.vue to the components folder
+Then add this code to it:
+
+<template>
+  <button @click="handleClick">{{ label }}</button>
+</template>
+
+<script>
+export default {
+  props: {
+    label: String,
+    value: String,
+  },
+  methods: {
+    handleClick() {
+      this.$emit("vote-button-click", this.value);
+    },
+  },
+};
+</script>
+
+<style>
+</style>
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Notice that you can feed in a prop named label to display on the button
+and that there is a prop for value
+When the button is clicked, the component emits an event that includes the value assigned to the component
+
+
+
+Now we'll create a component that uses two of the VoteButton components 
+
+Create VoteBox.vue in the components folder
+Then add this code to it:
+
+
+<template>
+  <div class="vote-box">
+    <h3>{{ message }}</h3>
+    <VoteButton
+      @vote-button-click="handleVoteButtonClick"
+      label="Like"
+      value="yes"
+    />
+    <VoteButton
+      @vote-button-click="handleVoteButtonClick"
+      label="Dislike"
+      value="no"
+    />
+  </div>
+</template>
+
+<script>
+import VoteButton from "./VoteButton.vue";
+
+export default {
+  props: ["message", "postId"],
+  components: {
+    VoteButton,
+  },
+  methods: {
+    handleVoteButtonClick(value) {
+      console.log("Voted to " + value + " for post: " + this.postId);
+    },
+  },
+};
+</script>
+
+<style>
+</style>
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Finally, let's plug the VoteBox into the BlogPost view component
+Make these changes to BlogPost.vue:
+
+1. Import the VoteBox component 
+
+    import VoteBox from "../components/VoteBox.vue";
+
+2. Register it:
+
+    components: {
+        VoteBox,
+    }
+
+3. Add it to the template:
+
+    <VoteBox :postId="id" message="Did you like this post?" />
+
+
+Now we could use the VoteButton to create a rating vote box
+How would you rate this blog post (1-5)
+
+
+//////////////////////////////////////////////////////////
+// At this point we should stop and an talk about
+HTTP
+XMLHttpRequest
+Promises
+Fetch
+Axios
+Vuex (I'd like to experiment with integrating vuex into this app)
+- https://flaviocopes.com/vuex/
+- https://www.freecodecamp.org/news/learn-vuex-in-5-minutes/
+I'd also like to experiment with the Router functions
+
+
+
+///////////////////////////////////////////////////////////////////
+// PART 3 - USING A MOCK SERVER FOR THE DATA
+///////////////////////////////////////////////////////////////////
+
+1. Add post-data.json to the project folder
+2. Open a new terminal and navigate into the folder contains the post-data.json file.
+3. Run the mock web server that we installed with NPM by entering this command:
+
+    npx json-server --watch post-data.json
+
+When the json server launches you'll see a URL appear in the terminal that looks something like this:
+
+    http://localhost:3000/posts
+
+This is the (mock) web service that we'll use to store our data
+
+
+
+API Calls with Axios (most popular ajax library for Vue apps)
+
+Use Vue UI to install Axios:
+1. Open yet another terminal window, then navigate into the project folder and run this command:
+
+    vue ui 
+
+2. After a while the Vue UI website will start up, then click on the Dependencies icon (a puzzle piece)
+3. Click on +Install Dependency
+4. Enter 'axios' in the search bar, when the axios libraray appears click the Install button 
+
+OR, THE EASIER WAY TO INSTALL AXIOS, FROM THE COMMAND LINE:
+
+npm install axios --save-dev
+
+You should keep your installed plugins up to date, you can update each one in the Vue UI site
+OR you can use the terminal to see the outdated plugins:
+
+    npm outdated
+    npm update
+
+
+In BlogList:
+    1. comment out the import for data
+    
+    2. add import for axios:
+            
+            import axios from "axios";
+
+    3. Replace the code in the created() method with this:
+
+        axios.get("http://localhost:3000/posts").then((response) => {
+            console.log(response.data);
+            this.posts = response.data;
+        }).catch((error) => {
+            console.log("ERROR!!! " + error.response);
+        });
+
+In BlogPost:
+
+    1. comment out the import for data
+    
+    2. add import for axios:
+            
+            import axios from "axios";
+
+    3. Comment out the getPostById() method - we don't need it
+
+    4. Replace the code in created() with this:
+
+        axios
+        .get("http://localhost:3000/posts/" + this.id)
+        .then((response) => {
+            //console.log(this);
+            this.title = response.data.title;
+            this.content = response.data.post;
+            this.author = response.data.author;
+        })
+        .catch((error) => {
+            //console.log("ERROR!!! " + error.response);
+            console.log(error);
+        });
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
