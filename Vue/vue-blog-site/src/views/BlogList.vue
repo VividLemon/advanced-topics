@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import data from "../post-data.json";
+import axios from "axios"
 import BlogListItem from "../components/BlogListItem"
 
 export default {
@@ -20,7 +20,13 @@ export default {
     }
   },
   mounted() {
-    this.posts = data.posts;
+    //this.posts = data.posts;
+    axios.get("http://localhost:3000/posts").then((response) => {
+      console.log(response.data);
+      this.posts = response.data;
+    }).catch((err) => {
+      console.log(`Error: ${err}`);
+    });
   }
 };
 </script>

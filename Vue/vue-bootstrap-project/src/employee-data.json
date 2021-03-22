@@ -1,0 +1,11 @@
+
+{
+    "employees": [
+        {"id":1, "firstName":"Jane", "lastName":"Doe", "email":"jdoe@acme.com", "password":"bang", "birthdate":"2001-02-03", "active": false},
+        {"id":2, "firstName":"Tony", "lastName":"Thompsom", "email":"tony@acme.com", "password":"bang", "birthdate":"2000-7-3", "active": false},
+        {"id":3, "firstName":"Jesse", "lastName":"Burd", "email":"jesse@acme.com", "password":"bang", "birthdate":"2002-02-03", "active": false},
+        {"id":4, "firstName":"Issayah", "lastName":"Jones", "email":"jesse@acme.com", "password":"bang", "birthdate":"2002-02-03", "active": true},
+        {"id":5, "firstName":"Nicholas", "lastName":"Jones", "email":"jesse@acme.com", "password":"bang", "birthdate":"2002-02-03", "active": true}
+
+    ]
+}

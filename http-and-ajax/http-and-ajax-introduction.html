@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Interacting with a Web API</title>
+	<style type="text/css">
+		body{padding:25px; font-family: Verdana; line-height: 1.5em;}
+		label{ display: inline-block; width:200px; text-align: right; }
+		pre{padding-left: 20px; color:midnightblue;}
+		div.answer{background-color: lightgray; padding:20px;}
+		li{margin-bottom: 15px;}
+	</style>
+	<script type="text/javascript">
+	window.addEventListener("load", () => {
+		
+
+		document.getElementById("btn1").addEventListener("click", () => {
+			
+			// POST THE DATA AS JSON...
+			const firstName = document.getElementById("txtFirstName").value;
+			const lastName = document.getElementById("txtLastName").value;
+			const email = document.getElementById("txtEmail").value;
+			const password = document.getElementById("txtPassword").value;
+
+			// put the data into an object
+			const obj = {firstName,lastName,email,password};
+			//console.log(obj);
+
+			// then serialize it as a JSON string
+			const json = JSON.stringify(obj);
+			//console.log("This is a string, not an object", json);
+
+			const url = "http://localhost:3000/users/";
+						
+			// configure the options for the request
+			let options = {
+				method:"POST",
+				headers: {
+			      'Content-Type': 'application/json'
+			    },
+			    body: json
+			}
+
+			fetch(url,options).then(response => console.log(response))
+		});
+
+
+
+		document.getElementById("btn2").addEventListener("click", () => {
+			
+			// POST THE DATA USING (FORM) URL ENCODING
+			const firstName = document.getElementById("txtFirstName").value;
+			const lastName = document.getElementById("txtLastName").value;
+			const email = document.getElementById("txtEmail").value;
+			const password = document.getElementById("txtPassword").value;
+
+			const obj = {firstName,lastName,email,password};
+			//console.log(obj);
+
+			const url = "http://localhost:3000/users/";
+			
+			//we need to encode the obj into the url (querystring) params
+			// I stole the code to do so here: https://stackoverflow.com/questions/6566456/how-to-serialize-an-object-into-a-list-of-url-query-parameters/43843090
+			var str = "";
+			for (var key in obj) {
+			    if (str != "") {
+			        str += "&";
+			    }
+			    str += key + "=" + encodeURIComponent(obj[key]);
+			}
+
+			alert(str);
+
+			options = {
+				method:"POST",
+				headers: {
+			      'Content-Type': 'application/x-www-form-urlencoded',
+			    },
+			    body: str
+			}
+
+			fetch(url,options).then(response => console.log(response))
+		});
+	});
+	</script>
+</head>
+<body>
+	<h1>HTTP and AJAX</h1>
+	<p>
+		You may want to open your gmail account and then look at the Network tab in the developer tools.
+		You'll notice that the web page is making various ajax calls (for example, to check for new emails).
+	</p>
+	<p>
+		Make sure to start the JSON server and watch the users.json file:
+	</p>
+	<pre><b>json-server -w users.json</b></pre>
+	<h2>Traditional HTML Form Posting</h2>
+	<p>
+		Below is a traditional HTML form.
+		If you enter some data and press the submit button, the data will be POSTed and you will be redirected to the JSON server (note the attributes in the FORM element).
+	</p>
+	<form method="POST" action="http://localhost:3000/users">
+		<label for="txtFirstName">First Name:</label>
+		<input type="text" id="txtFirstName" name="firstName" />
+		<br>
+		<label for="txtLastName">Last Name:</label>
+		<input type="text" id="txtLastName" name="lastName" />
+		<br>
+		<label for="txtEmail">Email:</label>
+		<input type="text" id="txtEmail" name="email" />
+		<br>
+		<label for="txtPassword">Password:</label>
+		<input type="password" id="txtPassword" name="password" />
+		<br>
+		<label></label>
+		<input type="submit">
+	</form>
+	<ul>
+		<li>
+			If you open the Network tab in the Chrome developer tools and submit the form again, you can see information about the HTTP request and response.
+			You should see a request for 'users'.
+			Click on that line and you'll be able to see all the details of the request and response.
+		</li>
+		<li>
+			Notice that the Request Method is <b>POST</b>.
+		</li>
+		<li>
+			Also notice that the <b>Content-Type</b> header in the request is <b>application/x-www-form-urlencoded</b>.
+			If you poke around a bit, you should see the body of the request.
+			Note that it looks something like this:
+			<pre><b>firstName=blah&lastName=blah&email=blah&password=blah</b></pre>
+		</li>
+		<li>
+			This is how the data is formatted for traditional HTML form posting (form-urlencoded)
+		</li>
+	</ul>
+	<h2>Posting Data with AJAX</h2>
+	<p>
+		If you enter data into the form, and click the button below (rather than the submit button in the form), the data will be sent via AJAX rather than a traditional form posting.
+	</p>
+	<button id="btn1">AJAX POST (Sending JSON formatted data)</button>
+	<ul>
+		<li>
+			Note that when the button is pressed, the browser doesn't redirect (we stay on this page).
+			AJAX requests will not redirect the browser, the request is made behind the scene.
+		</li>
+		<li>
+			Note that there are actually two requests made. An OPTIONS request is sent before the actual POST request
+
+		</li>
+		<li>
+			If you look at the JavaScript code, you'll see that the <b>fetch()</b> method is used to make the AJAX request.
+			The fetch method is built into JavaScript but it has some limitations, so we'll be using a popular library called <b>Axios</b> to make our AJAX calls.
+		</li>
+		<li>
+			When posting data with AJAX, you can send the data in different formats (although JSON has become the dominant way of formatting data).
+			If you click the button below, the data will be sent in the traditional format.
+			Note that the <b>Content-Type</b> header should be set to so that the web server knows what data format is being used.
+		</li>
+	</ul>
+	<button id="btn2">AJAX POST (Sending form-urlencoded data)</button>
+	<h2>Making HTTP Requests with CURL</h2>
+	<p>
+		You don't need a browser (or JavaScript) to make HTTP requests.
+		There are many tools that allow you to send HTTP requests.
+		One of the most common tools (that hackers use) is call CURL.
+	</p>
+	<p>
+		Open the terminal and try a few commands:
+	</p>
+	<pre><b>
+curl --request GET http://localhost:3000/users/
+
+curl --request GET http://localhost:3000/users/1
+
+curl --request POST http://localhost:3000/users/ -d firstName=Bob -d lastName=Smith -H 'Content-Type: application/x-www-form-urlencoded'
+
+curl --request PUT http://localhost:3000/users/1 -d firstName=Bob -d lastName=Smith -H 'Content-Type: application/x-www-form-urlencoded'
+
+curl --request PATCH http://localhost:3000/users/1 -d firstName="Robert" -H 'Content-Type: application/x-www-form-urlencoded'
+# WE SHOULD DISCUSS THE DIFFERENCE BETWEEN A PUT AND A PATCH REQUEST
+
+curl --request DELETE http://localhost:3000/users/1 
+	</b></pre>
+	<h2>Documenting an API</h2>
+	<p>
+		For your final project, you will have to document the API of your web service.
+		Here is the documentation for the parts that we are building together:
+	</p>
+	<table border="1" cellpadding="5">
+		<tr>
+			<th width="200">URL</th>
+			<th>METHOD</th>
+			<th>NOTES</th>
+		</tr>
+		<tr>
+			<td>users/</td>
+			<td>GET</td>
+			<td>Gets all users*</td>
+		</tr>
+		<tr>
+			<td>users/</td>
+			<td>POST</td>
+			<td>Inserts a user*</td>
+		</tr>
+		<tr>
+			<td>users/1</td>
+			<td>GET</td>
+			<td>Gets the user with the ID of 1*</td>
+		</tr>
+		<tr>
+			<td>users/1</td>
+			<td>PUT</td>
+			<td>Updates the user with an ID of 1*</td>
+		</tr>
+		<tr>
+			<td>users/1</td>
+			<td>DELETE</td>
+			<td>Deletes the user with an ID of 1***</td>
+		</tr>
+		<tr>
+			<td>roles/</td>
+			<td>GET</td>
+			<td>Gets all roles*</td>
+		</tr>
+		<tr>
+			<td>roles/</td>
+			<td>POST</td>
+			<td>Inserts a role*</td>
+		</tr>
+		<tr>
+			<td>roles/1</td>
+			<td>GET</td>
+			<td>Gets the role with the ID of 1*</td>
+		</tr>
+		<tr>
+			<td>roles/1</td>
+			<td>PUT</td>
+			<td>Updates the role with an ID of 1*</td>
+		</tr>
+		<tr>
+			<td>roles/1</td>
+			<td>DELETE</td>
+			<td>Deletes the role with an ID of 1***</td>
+		</tr>
+		<TR>
+			<td>employees</td>
+			<td>post</td>
+			<td>inserts a user</td>
+		</TR>
+		<tr>
+			<td>employees</td>
+			<td>get</td>
+			<td>Gets all employees </td>
+		</tr>
+		<tr>
+			<td>employees</td>
+			<td>Delete</td>
+			<td>deletes all employees</td> 
+			<!-- Probably don't add that? -->
+		</tr>
+		<tr>
+			<td>employees/1</td>
+			<td>Get</td>
+			<td> Gets the employee with id of 1</td>
+		</tr>
+		<tr>
+			<td>employees/1</td>
+			<td>PUt</td>
+			<td>Updates the employee with id of 1</td>
+		</tr>
+		<tr>
+			<td>employees/1</td>
+			<td>Delete</td>
+			<td> Deletes the employee with id of 1</td>
+		</tr>
+		<TR>
+			<td>employee_department/</td>
+			<td>post</td>
+			<td>inserts an employee_department</td>
+		</TR>
+		<tr>
+			<td>employee_department/</td>
+			<td>get</td>
+			<td>Gets all employee_departments </td>
+		</tr>
+		<tr>
+			<td>employee_department/</td>
+			<td>Delete</td>
+			<td>deletes all employee_departments</td> 
+			<!-- Probably don't add that? -->
+		</tr>
+		<tr>
+			<td>employee_department/1</td>
+			<td>Get</td>
+			<td> Gets the employee_department with id of 1</td>
+		</tr>
+		<tr>
+			<td>employee_department/1</td>
+			<td>PUt</td>
+			<td>Updates the employee_department with id of 1</td>
+		</tr>
+		<tr>
+			<td>employee_department/1</td>
+			<td>Delete</td>
+			<td> Deletes the employee_department with id of 1</td>
+		</tr>
+		<!-- next -->
+		<TR>
+			<td>Products/</td>
+			<td>post</td>
+			<td>inserts a product</td>
+		</TR>
+		<tr>
+			<td>Products/</td>
+			<td>get</td>
+			<td>Gets all products</td>
+		</tr>
+		<tr>
+			<td>Products/</td>
+			<td>Delete</td>
+			<td>deletes all products</td> 
+			<!-- Probably don't add that? -->
+		</tr>
+		<tr>
+			<td>Products/1</td>
+			<td>Get</td>
+			<td> Gets the product with id of 1</td>
+		</tr>
+		<tr>
+			<td>Products/1</td>
+			<td>PUt</td>
+			<td>Updates the product with id of 1</td>
+		</tr>
+		<tr>
+			<td>Products/1</td>
+			<td>Delete</td>
+			<td> Deletes the proodcut with id of 1</td>
+		</tr>
+	</table>
+	*This resource will need to be secured so that not just anyone can make a request for it.
+	<br>
+	**We may not want to actually delete any rows, foreign key constraints might make this really messy.
+	<h2>Questions</h2>
+	<p>
+		Watch this <a href="https://www.youtube.com/watch?v=PgrP6r-cFUQ" target="_blank">video</a> about designing the API for a web service.
+		Then answer the following questions (you may have to do some googling):
+	</p>
+	<ul>
+		<li>
+			What is a RESTful API? What are some other approaches to building a web api?
+			<div class="answer">It is building an api that other developers can use over HTTP. This means no one has to download anything to take advantage.</div>
+		</li>
+		<li>
+			What type of request method is used to insert a new resource?
+			<div class="answer">Post</div>
+		</li>
+		<li>
+			What is the difference between a <b>PUT</b> request and a <b>PATCH</b> request?
+			<div class="answer">Put will delete all other data that exists in the update, then updates the information. Patch will append (or change) the information that is with it.</div>
+		</li>
+		<li>
+			How might you allow requests that specify how a collection should be sorted?
+			<div class="answer">Put your answer here</div>
+		</li>
+		<li>
+			What is the purpose of an OPTIONS request?
+			<div class="answer">As I understand it, an options request will return which http methods are allowed by a resource. GET, POST, PUT, DELETE. </div>
+		</li>
+		<li>
+			What is URL rewriting? Note that many web sites and web APIs make use of it.
+			<div class="answer">Websites use it to change what the actual url is, to something more understandable and readable. It takes a very long URL and condenses it into something readable and easily rememberable</div>
+		</li>
+		<li>
+			Complete the table above and add the API calls for your final project.
+		</li>
+	</ul>
+</body>
+</html>

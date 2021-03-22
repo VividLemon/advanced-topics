@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Axios Samples</title>
+
+<!-- Import Axios -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<style type="text/css">
+	textarea{ width: 90%; height:300px; border: 1px solid midnightblue; }
+</style>
+
+<script type="text/javascript">
+window.addEventListener("load", () => {
+
+	const txtResponse = document.getElementById("txtResponse");
+	const txtError = document.getElementById("txtError");
+
+	const clearLogs = () => {
+		txtResponse.value = "";
+		txtError.value = "";
+	}
+
+	const logResponse = (msg) => {
+		txtResponse.value = msg;
+	}
+
+	const logError = (msg) => {
+		txtError.value = msg;
+	}
+	
+	// Here's the Axios offical page:
+	// https://github.com/axios/axios
+
+	document.getElementById("btnSendRequest").addEventListener("click", () => {
+
+		clearLogs();
+
+		const url = "request-handler.php"
+
+		/*
+		// Example 1 - Get request
+		axios.get(url).then(resp => logResponse(resp.data)).catch(error => logError(error));
+		
+		// Note - uncomment the sleep() call in the php code and notice how long it takes for the response to come back
+		// alert("Waiting for the response....")
+		*/
+
+
+		/*
+		// Example 2 - Get request with query string params
+		const queryStringParams = "?firstName=Bob&lastName=Smith";
+		axios.get(url + queryStringParams).then(resp => logResponse(resp.data)).catch(error => logError(error));
+		*/
+
+
+		/*
+		// Example 3 - Traditional post request (Content-Type: application/x-www-form-urlencoded)
+		const requestBody = "firstName=Buster&lastName=Jones";
+	    const config = {
+	  		headers:{"Content-Type": "application/x-www-form-urlencoded"}
+	  	};
+	  	axios.post(url, requestBody, config).then(resp => logResponse(resp.data)).catch(error => logError(error));
+		*/
+
+
+	  	/*
+	    // Example 4 - Post request with JSON (Content-Type: application/json)
+		const data = {firstName:"Sally", lastName:"Johnson"};
+		// We need to convert the data (an object) into a JSON string...
+		const jsonRequestBody = JSON.stringify(data);
+	    const config = {
+	    	headers:{"Content-Type": "application/json"}
+	    };
+	    axios.post(url, jsonRequestBody, config).then(resp => logResponse(resp.data)).catch(error => logError(error));
+
+	    
+		// A few notes here....
+		// - The $_POST super global array will be empty (it only reads data from traditional posts)
+		// - Axios defaults to sending data as JSON, so unless you specifiy otherwise...
+		// -	It will automatically convert the data to a json string
+		// - 	It will automatically set Content-Type header to application/json
+	 	// - So you could do this and it will do the same thing as previous post request:
+	    // // axios.post(url, data).then(resp => logResponse(resp.data)).catch(error => logError(error));
+
+		// Also note that if you pass a string (rather than an object) as the second param to post(), 
+		// then axios sets the Content-Type request header to application/x-www-form-urlencoded 
+		*/
+
+
+		/*
+		// Example 5 - Request that the data be returned in a specific format
+		const config = {
+			headers: {Accept: "application/json"}
+		}
+		axios.get(url, config).then(resp => logResponse(resp.data)).catch(error => logError(error));
+		// Note that the server should set the Content-Type RESPONSE header to the format that it is using in the response
+		// Here are some common content types:
+		// 	https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
+		*/
+
+
+		/*
+		// // Example 6 - You can set your own custom headers
+		// const config = {
+		// 	headers: {X-username: "Bob"}
+		// }
+		// axios.get(url, config).then(resp => logResponse(resp.data)).catch(error => logError(error));
+		
+		// // The server would need to be configured to look for these custom headers in order to know what to do with them.
+		*/
+
+
+
+	
+		// Example 7 - Looking at the response headers from the server
+		// Note that one of the keys to mastering HTTP is understanding what all the request and response headers are for.
+		axios.get(url).then(resp => {
+			let str = "Response Headers\n";
+			for(key in resp.headers){
+				str += key + ": " + resp.headers[key] + "\n"; 
+			}
+
+			logResponse(str + "\n\n\n\n" + resp.data);
+		}).catch(error => logError(error));
+
+
+		// Make sure to play around with the set_response_headers() 
+		// function in the PHP code
+		
+
+
+		/*
+		// Example 8 - Notice that a Cookie header has been sent with every response
+		// This cookie contains the PHP session id (The PHP code calls session_start(), which allows you to store session variables on the server )
+		axios.get(url).then(resp => logResponse(resp.data)).catch(error => logError(error));
+	    */
+	
+	});
+
+});
+</script>
+</head>
+<body>
+	<button id="btnSendRequest">Send Request</button>
+	<h3>Response:</h3>
+	<textarea id="txtResponse"></textarea>
+	<h3>Error:</h3>
+	<textarea id="txtError"></textarea>
+</body>
+</html>
