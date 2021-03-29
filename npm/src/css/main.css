@@ -1,0 +1,38 @@
+div {
+  width: 80%;
+  padding: 0 10%;
+  line-height: 50px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+#div1 {
+  color: #fff;
+  background-color: #1a237e;
+}
+
+#div2 {
+  color: #fff;
+  background-color: #534bae;
+}
+
+#div3 {
+  color: #fff;
+  background-color: #000051;
+}
+
+#div4 {
+  color: #fff;
+  background-color: #651fff;
+}
+
+#div5 {
+  color: #fff;
+  background-color: #a255ff;
+}
+
+#div6 {
+  color: #fff;
+  background-color: #0100ca;
+}
+/*# sourceMappingURL=main.css.map */
