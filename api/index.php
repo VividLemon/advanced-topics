@@ -1,70 +1,48 @@
 <?php
+//session_start(); // we'll use sessions to securing resources, although I'm not sure we should
 
-/*
-THIS PAGE SHOULD ULTIMATELY BE THE DOCUMENTATION FOR YOUR WEB SERVICE API
-*/
-session_start();
+// We need to discuss URL rewriting before we do this
 
-echo(get_request_data());
-die();
+include_once("includes/config.inc.php");
+include_once("includes/Router.inc.php");
 
+// Get the requested url path (thanks to the magic of mod_rewrite)
+// Note that the .htaccess file is configured to redirect to this page
+// and append the requested path to the query string, for example: index.php?url_path=users/1
+$url_path = $_GET['url_path'] ?? "";
+//die($url_path);
 
-/**
-* The get_request_data() function gets info about an incoming HTTP Request.
-* Here's the info that it gathers:
-*
-* $_SERVER['REQUEST_METHOD'];			Tells you the method/type of request (GET, POST, etc.)
-* $_SERVER['REQUEST_URI'];				Tells you the URL being requested (include the query string)
-* file_get_contents('php://input');		This function returns the body of the request
-* getallheaders();						This function returns an array of all headers in the request
-* $_GET									This array inlcudes the URL parameters in the query string
-* $_POST								This array includes all the user input entered into a form
-*
-*/
-
-function get_request_data(){
-
-	$strArray = [];
-
-	$strArray[] = "REQUEST METHOD: {$_SERVER['REQUEST_METHOD']}";
-	$strArray[] = "REQUEST URI: {$_SERVER['REQUEST_URI']}";
-
-	$strArray[] = "REQUEST HEADERS...";
-	$request_headers = getallheaders();
-	foreach ($request_headers as $key => $value) {
-		$strArray[] = "$key : $value";
-	}
-
-	if(!empty($_GET)){
-		$strArray[] = "QUERY STRING PARAMS...";
-		foreach ($_GET as $key => $value) {
-			$strArray[] = "$key : $value";
-		}
-	}
-
-	if(!empty($_POST)){
-		$strArray[] = "POST PARAMS...";
-		foreach ($_POST as $key => $value) {
-			$strArray[] = "$key : $value";
-		}
-	}
-
-	if(!empty($_COOKIE)){
-		$strArray[] = "COOKIES...";
-		foreach ($_COOKIE as $key => $value) {
-			$strArray[] = "$key : $value";
-		}
-	}
-
-	$request_body = file_get_contents('php://input');
-	if(!empty($request_body)){
-		$strArray[] = "REQUEST BODY...";
-		$strArray[] = $request_body;
-	}
-
-	return implode($strArray, "\n");
-
+if($url_path == ""){
+	die("show the api documentation page");
 }
 
+$routes = [
+	"users/" => ["controller" => "UserController", "action" => "handleUsers"],
+	"users/:id" => ["controller" => "UserController", "action" => "handleSingleUser"],
+	"roles/" => ["controller" => "RoleController", "action" => "handleRoles"],
+	"customers/:id/orders" =>	["controller" => "CustomerController", "action" => "getCustomerOrders"]
+];
+
+$router = new Router($routes);
+
+
+// IDEA - have the students set up their routes and then
+// test my router, just make sure that its returning the correct controller/action
+// for each of their routes.
+// Start off by giving the students this page
+$route = $router->getController($url_path);
+
+if($route = $router->getController($url_path)){
+	$className = $route['controller'];
+	$method = $route['action'];
+	
+	include_once("includes/controllers/$className.inc.php");
+	$controller = new $className(get_link());
+	call_user_func(array($controller, $method));
+}else{
+	header('HTTP/1.1 400 Bad Request');
+}
+die();
+// TODO: plug all of your api calls into the $routes array
 
 ?>

@@ -224,10 +224,8 @@ class UserDataAccess extends DataAccess{
 
 		$result = mysqli_query($this->link, $qStr) or $this->handleError(mysqli_error($this->link));
 
-		if($result){
+		if($result && $result->affected_rows == 1){
 			return true;
-		}else{
-			$this->handleError("unable to update user");
 		}
 
 		return false;

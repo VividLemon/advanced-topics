@@ -11,7 +11,7 @@ function myExceptionHandler($exception) {
 	$str .= $exception->getMessage();
 
     if(DEBUG_MODE){
-		var_dump($exception);
+		print_r($exception);
 	}else{
 		//How to handle exceptions???
 		

@@ -12,7 +12,7 @@ if($_SERVER['SERVER_NAME'] == "localhost"){
 	define("DB_HOST", "localhost");
 	define("DB_USER", "root");
 	define("DB_PASSWORD", "");
-	define("DB_NAME", "user_manager");
+	define("DB_NAME", "adv_topics_final_project");
 	define("SITE_ADMIN_EMAIL", "PUT EMAIL ADDRESS HERE");
 	define("SITE_DOMAIN", $_SERVER['SERVER_NAME']);
 	define("PROJECT_DIR", "/api/");
