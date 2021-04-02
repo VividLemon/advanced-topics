@@ -222,13 +222,19 @@ class UserDataAccess extends DataAccess{
        
 		//die($qStr);
 
-		$result = mysqli_query($this->link, $qStr) or $this->handleError(mysqli_error($this->link));
+		$result = mysqli_query($this->link, $qStr) or $this->handleError(mysqli_error($this->link)); 
 
-		if($result && $result->affected_rows == 1){
+		$mysqli_test = preg_split("/ +/", mysqli_info($this->link));
+		$records = (int)$mysqli_test[2]; 
+		$changes = (int)$mysqli_test[4];
+
+		if($result && mysqli_affected_rows($this->link) == 1){
 			return true;
+		}else if($records == 1 && $changes == 0){
+			$this->handleError("Unable to update a user with no changes");
+		}else{
+			$this->handleError("Unable to update user");
 		}
-
-		return false;
 	}
 
 

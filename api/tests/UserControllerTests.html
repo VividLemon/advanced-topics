@@ -55,17 +55,16 @@
 
 
 		document.getElementById("btnPutUser").addEventListener("click", () => {
-			const userId = 1;
 			const user = {
-				id: userId,
-				firstName: "bill",
-				lastName: "Smihgljhgth", 
-				email: "bill@billjhlkj.com", 
+				id: 1,
+				firstName: "Bill",
+				lastName: "Joe", 
+				email: "Bil@ffaasffsldoe.com", 
 				roleId: 1,
 				password: "test", 
 				active: "yes"
 			};
-			ax.put(`users/${userId}`, user)
+			ax.put(`users/${user.id}`, user)
 				.then(resp => console.log(resp))
 				.catch(err => console.log(err));
 		});

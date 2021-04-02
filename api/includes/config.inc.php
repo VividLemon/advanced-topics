@@ -51,7 +51,7 @@ function get_link(){
 	if($link == null){
 		
 		$link = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
-
+		
 		if(!$link){
 			throw new Exception(mysqli_connect_error()); 
 		}

@@ -105,8 +105,6 @@ class UserController extends Controller{
 							$this->sendHeader(200);
 							echo $json;
 							die();
-						}else{
-							$this->sendHeader(500, true, "Unable to update user");
 						}
 					}catch(Exception $e){
 						$this->sendHeader(400, true, $e->getMessage());
