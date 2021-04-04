@@ -20,7 +20,7 @@ class Employee extends Model
 
 		$this->id = $args['id'] ?? 0;
         $this->user_id = $args['user_id'];
-        $this->dob = $args['dob'] ?? new Date();
+        $this->dob = $args['dob']; #TODO
         $this->salary = $args['salary'] ?? 0;
         $this->part_time = $args['part_time'] ?? false;
 		// set the rest of the instance vars

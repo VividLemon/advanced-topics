@@ -127,7 +127,28 @@ class employeeDataAccess extends DataAccess{
 	    * @return {object}		Returns the same model object that was passed in as the param
 	    */
 	    function update($employee){
-			#TODO
+			$row = $this->convertModelToRow($user);
+
+			$qStr = "UPDATE employees SET
+					user_id = '{$row['user_id']}',
+					emp_date_of_birth = '{$row['emp_date_of_birth']}',
+					emp_salary = '{$row['emp_salary']}',
+					emp_part_time = '{$row['emp_part_time']}'
+				WHERE employee_id = " . $row['employee_id'];
+
+			$result = mysqli_query($this->link, $qStr) or $this->handleError(mysqli_error($this->link)); 
+
+			$mysqli_test = preg_split("/ +/", mysqli_info($this->link));
+			$records = (int)$mysqli_test[2]; 
+			$changes = (int)$mysqli_test[4];
+
+			if($result && mysqli_affected_rows($this->link) == 1){
+				return true;
+			}else if($records == 1 && $changes == 0){
+				$this->handleError("Unable to update an employee with no changes");
+			}else{
+				$this->handleError("Unable to update employee");
+			}
 	    }
 
 

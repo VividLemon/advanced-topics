@@ -116,7 +116,27 @@ class EmployeeDepartmentDataAccess extends DataAccess{
 	    * @return {object}		Returns the same model object that was passed in as the param
 	    */
 	    function update($department){
-			#TODO
+			$row = $this->convertModelToRow($user);
+
+			$qStr = "UPDATE employee_department SET
+					department_name = '{$row['department_name']}',
+					department_staff_count = '{$row['department_staff_count']}',
+					employee_id = '{$row['employee_id']}'
+				WHERE department_id = " . $row['department_id'];
+
+			$result = mysqli_query($this->link, $qStr) or $this->handleError(mysqli_error($this->link)); 
+
+			$mysqli_test = preg_split("/ +/", mysqli_info($this->link));
+			$records = (int)$mysqli_test[2]; 
+			$changes = (int)$mysqli_test[4];
+
+			if($result && mysqli_affected_rows($this->link) == 1){
+				return true;
+			}else if($records == 1 && $changes == 0){
+				$this->handleError("Unable to update an employee department with no changes");
+			}else{
+				$this->handleError("Unable to update employee department");
+			}
 	    }
 
 

@@ -118,7 +118,25 @@ class RoleDataAccess extends DataAccess{
 	    * @return {object}		Returns the same model object that was passed in as the param
 	    */
 	    function update($role){
-			#TODO
+			$row = $this->convertModelToRow($role);
+			$qstr = "UPDATE user_roles SET
+			user_role_name = '{$row['user_role_name']}',
+			user_role_desc = '{$row['user_role_desc']}'
+			WHERE user_role_id = " . $row['user_role_id'];
+
+			$result = mysqli_query($this->link, $qstr) or $this->handleError(mysqli_error($this->link));
+
+			$mysqli_test = preg_split("/ +/", mysqli_info($this->link));
+			$records = (int)$mysqli_test[2]; 
+			$changes = (int)$mysqli_test[4];
+
+			if($result && mysqli_affected_rows($this->link) == 1){
+				return true;
+			}else if($records == 1 && $changes == 0){
+				$this->handleError("Unable to update a role with no changes");
+			}else{
+				$this->handleError("Unable to update role");
+			}
 	    }
 
 

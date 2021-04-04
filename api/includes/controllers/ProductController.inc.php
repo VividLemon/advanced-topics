@@ -1,11 +1,11 @@
 <?php
 
 include_once("Controller.inc.php");
-include_once(__DIR__ . "/../models/User.inc.php");
-include_once(__DIR__ . "/../dataaccess/UserDataAccess.inc.php");
+include_once(__DIR__ . "/../models/Product.inc.php");
+include_once(__DIR__ . "/../dataaccess/ProductDataAccess.inc.php");
 
 
-class UserController extends Controller{
+class ProductController extends Controller{
 
 
 	function __construct($link){
@@ -20,20 +20,21 @@ class UserController extends Controller{
 	  and return the data in the requested format (for example json, xml, csv, etc)
 	*/
 
-	public function handleUsers(){
+	public function handle_products(){
 
-		$da = new UserDataAccess($this->link);
+		$da = new ProductDataAccess($this->link);
+		$this->allowCors();
 
 		switch($_SERVER['REQUEST_METHOD']){
 			case "POST":
 				// start off with just this inside this braanch
 				$data = $this->getJSONRequestBody();
 
-				$user = new User($data);
-				if($user->isValid()){
+				$product = new Product($data);
+				if($product->isValid()){
 					try{
-						$user = $da->insert($user);
-						$json = json_encode($user);
+						$product = $da->insert($product);
+						$json = json_encode($product);
 
 						$this->setContentType('json');
 						$this->sendHeader(200);
@@ -45,19 +46,19 @@ class UserController extends Controller{
 						$this->sendHeader(500,true, $e->getMessage());
 					}
 				}else{
-					$msg = implode(', ', array_values($user->validationErrors));
+					$msg = implode(', ', array_values($product->validationErrors));
 					$this->sendHeader(400, true, $msg);
 					die();
 				}
 				break;
 			case "GET":
-				$users = $da->getAll();
-				$jsonUsers = json_encode($users, JSON_PRETTY_PRINT);
+				$products = $da->getAll();
+				$jsonProducts = json_encode($products, JSON_PRETTY_PRINT);
 				$this->setContentType("json");
 				$this->sendHeader(200);
 				$this->allowCors();
 
-				echo($jsonUsers);
+				echo $jsonProducts;
 				die();
 				break;
 			default:
@@ -68,26 +69,26 @@ class UserController extends Controller{
 
 
 
-	public function handleSingleUser(){
+	public function handle_single_product(){
 
 		$url_path = $this->getUrlPath();
 		$url_path = $this->removeLastSlash($url_path);
 		//echo($url_path);
 
-		// extract the user id
+		// extract the product id
 		$id = null;		
-		if(preg_match('/^users\/([0-9]*\/?)$/', $url_path, $matches)){
+		if(preg_match('/^products\/([0-9]*\/?)$/', $url_path, $matches)){
 			$id = $matches[1];
 		}
 		
-		$da = new UserDataAccess($this->link);
+		$da = new ProductDataAccess($this->link);
 		$this->allowCors();
 
 		switch($_SERVER['REQUEST_METHOD']){
 			case "GET":
-				//echo("GET USER $id");
-				$user = $da->getById($id);
-				$json = json_encode($user, JSON_PRETTY_PRINT);
+				//echo("GET PRODUCT $id");
+				$product = $da->getById($id);
+				$json = json_encode($product, JSON_PRETTY_PRINT);
 				$this->setContentType("json");
 				$this->sendHeader(200);
 				echo $json;
@@ -95,11 +96,11 @@ class UserController extends Controller{
 				break;
 			case "PUT":
 				$data = $this->getJSONRequestBody();
-				$user = new User($data);
-				if($user->isValid()){
+				$product = new Product($data);
+				if($product->isValid()){
 					try{
-						if($da->update($user)){
-							$json = json_encode($user);
+						if($da->update($product)){
+							$json = json_encode($product);
 							$this->setContentType('json');
 							$this->sendHeader(200);
 							echo $json;
@@ -109,13 +110,13 @@ class UserController extends Controller{
 					}
 					die();
 				}else{
-					$msg = implode(',', array_values($user->validationErrors));
+					$msg = implode(',', array_values($product->validationErrors));
 					$this->sendHeader(406, true, $msg);
 					die();
 				}
 				break;
 			case "DELETE":
-				echo("DELETE USER $id");
+				echo("DELETE PRODUCT $id");
 				break;
 			case "OPTIONS":
 				// AJAX CALLS WILL OFTEN SEND AN OPTIONS REQUEST BEFORE A PUT OR DELETE

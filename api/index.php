@@ -19,8 +19,14 @@ if($url_path == ""){
 $routes = [
 	"users/" => ["controller" => "UserController", "action" => "handleUsers"],
 	"users/:id" => ["controller" => "UserController", "action" => "handleSingleUser"],
-	"roles/" => ["controller" => "RoleController", "action" => "handleRoles"],
-	"customers/:id/orders" =>	["controller" => "CustomerController", "action" => "getCustomerOrders"]
+	"roles/" => ["controller" => "RoleController", "action" => "handle_roles"],
+	"roles/:id" => ["controller" => "RoleController", "action" => "handle_single_role"],
+	"employees/" => ["controller" => "EmployeeController", "action" => "handle_employees"],
+	"employees/:id" => ["controller" => "EmployeeController", "action" => "handle_single_employee"],
+	"employee_departments/" => ["controller" => "EmployeeDepartmentController", "action" => "handle_department"],
+	"employee_departments/:id" => ["controller" => "EmployeeDepartmentController", "action" => "handle_single_department"],
+	"products/" => ["controller" => "ProductsController", "action" => "handle_products"],
+	"products/:id" => ["controller" => "ProductsController", "action" => "handle_single_product"]
 ];
 
 $router = new Router($routes);

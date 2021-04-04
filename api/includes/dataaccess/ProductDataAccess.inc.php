@@ -117,7 +117,27 @@ class productDataAccess extends DataAccess{
 	    * @return {object}		Returns the same model object that was passed in as the param
 	    */
 	    function update($product){
-            #TODO
+            $row = $this->convertModelToRow($user);
+
+			$qStr = "UPDATE products SET
+					product_name = '{$row['product_name']}',
+					product_desc = '{$row['product_desc']}',
+					product_price = '{$row['product_price']}'
+				WHERE product_id = " . $row['product_id'];
+
+			$result = mysqli_query($this->link, $qStr) or $this->handleError(mysqli_error($this->link)); 
+
+			$mysqli_test = preg_split("/ +/", mysqli_info($this->link));
+			$records = (int)$mysqli_test[2]; 
+			$changes = (int)$mysqli_test[4];
+
+			if($result && mysqli_affected_rows($this->link) == 1){
+				return true;
+			}else if($records == 1 && $changes == 0){
+				$this->handleError("Unable to update a product with no changes");
+			}else{
+				$this->handleError("Unable to update product");
+			}
 	    }
 
 

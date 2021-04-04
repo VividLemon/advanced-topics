@@ -1,55 +1,55 @@
 <?php
 
 include_once("Controller.inc.php");
-include_once(__DIR__ . "/../models/Role.inc.php");
-include_once(__DIR__ . "/../dataaccess/RoleDataAccess.inc.php");
+include_once(__DIR__ . "/../models/Employee_department.inc.php");
+include_once(__DIR__ . "/../dataaccess/Employee_departmentDataAccess.inc.php");
 
 
-class RoleController extends Controller{
+class EmployeeDepartmentController extends Controller{
 
 
 	function __construct($link){
 		parent::__construct($link);
 	}
+	#TODO ALL CONTROLLERS NEED TO BE FIXED FOR CORS
 
+	public function handle_employee_departments(){
 
-	public function handle_roles(){
-
-		
-		$da = new RoleDataAccess($this->link);
+		$da = new EmployeeDepartmentDataAccess($this->link);
 		$this->allowCors();
 
 		switch($_SERVER['REQUEST_METHOD']){
 			case "POST":
-				// start off with just this inside this braanch
 				$data = $this->getJSONRequestBody();
 
-				$role = new Role($data);
-				if($role->isValid()){
-					try{
-						$role = $da->insert($role);
-						$json = json_encode($role);
+				$employee_department = new Department($data);
 
-						$this->setContentType('json');
+				if($employee_department->isValid()){
+					try{
+						$employee_department = $da->insert($employee_department);
+						$json = json_encode($employee_department);
+						
+						$this->setContentType("json");
 						$this->sendHeader(200);
 						$this->allowCors();
-
+						 
 						echo $json;
 						die();
 					}catch(Exception $e){
-						$this->sendHeader(500,true, $e->getMessage());
+						$this->sendHeader(500, true, $e->getMessage());
 					}
 				}else{
-					$msg = implode(', ', array_values($role->validationErrors));
+					$msg = implode(", ", array_values($employee_department->validationErrors));
 					$this->sendHeader(400, true, $msg);
 					die();
 				}
+
 				break;
 			case "GET":
-				$roles = $da->getAll();
-				$json_roles = json_encode($roles, JSON_PRETTY_PRINT);
+				$employee_departments = $da->getAll();
+				$json_employee_departments = json_encode($employee_departments, JSON_PRETTY_PRINT);
 				$this->setContentType("json");
-				echo $json_roles;
+				echo $json_employee_departments;
 				die();
 				break;
 			default:
@@ -58,25 +58,25 @@ class RoleController extends Controller{
 		}
 	}
 
-	public function handle_single_role(){
+	public function handle_single_employee(){
 		
 		$url_path = $this->getUrlPath();
 		$url_path = $this->removeLastSlash($url_path);
 		//echo($url_path);
 
-		// extract the role id
+		// extract the employee_department id
 		$id = null;		
-		if(preg_match('/^roles\/([0-9]*\/?)$/', $url_path, $matches)){
+		if(preg_match('/^employee_departments\/([0-9]*\/?)$/', $url_path, $matches)){
 			$id = $matches[1];
 		}
 		
-		$da = new RoleDataAccess($this->link);
+		$da = new EmployeeDepartmentDataAccess($this->link);
 		$this->allowCors();
 
 		switch($_SERVER['REQUEST_METHOD']){
 			case "GET":
-				$role = $da->getById($id);
-				$json = json_encode($role, JSON_PRETTY_PRINT);
+				$employee_department = $da->getById($id);
+				$json = json_encode($employee_department, JSON_PRETTY_PRINT);
 				$this->setContentType("json");
 				$this->sendHeader(200);
 				echo $json;
@@ -84,11 +84,11 @@ class RoleController extends Controller{
 				break;
 			case "PUT":
 				$data = $this->getJSONRequestBody();
-				$role = new role($data);
-				if($role->isValid()){
+				$employee_department = new Department($data);
+				if($employee_department->isValid()){
 					try{
-						if($da->update($role)){
-							$json = json_encode($role);
+						if($da->update($employee_department)){
+							$json = json_encode($employee_department);
 							$this->setContentType('json');
 							$this->sendHeader(200);
 							echo $json;
@@ -98,13 +98,13 @@ class RoleController extends Controller{
 					}
 					die();
 				}else{
-					$msg = implode(',', array_values($role->validationErrors));
+					$msg = implode(',', array_values($employee_department->validationErrors));
 					$this->sendHeader(406, true, $msg);
 					die();
 				}
 				break;
 			case "DELETE":
-				echo("DELETE role $id");
+				echo("DELETE employee_department $id");
 				break;
 			case "OPTIONS":
 				// AJAX CALLS WILL OFTEN SEND AN OPTIONS REQUEST BEFORE A PUT OR DELETE
@@ -116,7 +116,6 @@ class RoleController extends Controller{
 				$this->sendHeader(400);
 		}
 	}
-
 	
 
 }
