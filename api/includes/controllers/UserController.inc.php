@@ -23,6 +23,7 @@ class UserController extends Controller{
 	public function handleUsers(){
 
 		$da = new UserDataAccess($this->link);
+		// $this->allowCors();
 
 		switch($_SERVER['REQUEST_METHOD']){
 			case "POST":
@@ -59,6 +60,12 @@ class UserController extends Controller{
 
 				echo($jsonUsers);
 				die();
+				break;
+			case "OPTIONS":
+				// AJAX CALLS WILL OFTEN SEND AN OPTIONS REQUEST BEFORE A PUT OR DELETE
+				// TO SEE IF THE PUT/DELETE WILL BE ALLOWED
+				$this->allowCors();
+				header("Access-Control-Allow-Methods: GET,POST");
 				break;
 			default:
 				// set a 400 header (invalid request)
@@ -120,6 +127,7 @@ class UserController extends Controller{
 			case "OPTIONS":
 				// AJAX CALLS WILL OFTEN SEND AN OPTIONS REQUEST BEFORE A PUT OR DELETE
 				// TO SEE IF THE PUT/DELETE WILL BE ALLOWED
+				$this->allowCors();
 				header("Access-Control-Allow-Methods: GET,PUT,DELETE");
 				break;
 			default:
