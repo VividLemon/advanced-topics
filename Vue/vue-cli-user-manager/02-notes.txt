@@ -1,0 +1,255 @@
+
+
+Create a UserList component
+
+    <template>
+        <div class="user-list">
+            <table border="1">
+                <tr>
+                    <th>User</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Active</th>
+                    <th></th>
+                </tr>
+                <!--We'll put a sub-component here-->
+            </table>
+        </div>
+    </template>
+    <script>
+    export default {
+        props: {
+            users:{
+                type: Array
+            }
+        }
+    }
+    </script>
+
+
+Add the UserList component to the User view
+Import the UserList:
+
+    import UserList from "@/components/UserList.vue"
+
+Register it:
+
+    components:{
+        UserList
+    },
+
+Add a user-list elment to the template:
+
+    <user-list :users="users" />
+
+
+Create a component called UserListRow.vue (in the components folder)
+and add this code to it:
+
+    <template>
+        <tr>
+            <td>{{user.firstName + " " + user.lastName }}</td>
+            <td>{{user.email}}</td>
+            <td>
+                Role Drop Down goes here
+            </td>
+            <td>
+                checkbox goes here
+            </td>
+            <td>
+                <button>Edit</button>
+            </td>
+        </tr>
+    </template>
+
+    <script>
+
+
+    export default {
+        props:{
+            user: {
+                type: Object
+            }
+        },
+        
+    }
+    </script>
+
+
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Add the UserListRow to the UserList
+    Import the UserListRow
+    Register the UserListRow 
+    Then use it in the template (replace the tr with the v-for in it):
+
+        <user-list-row v-for="u in users" :key="u.id" :user="u" />
+
+
+
+
+Fetching roles from the api...
+Add this modeule/object to the api.js file:
+
+    const RoleDataAccess = {
+        getAllRoles(){
+            return ax.get("roles/)
+        }
+    }
+
+Then update the 'export' object to include the RoleDataAccess object (at the end of api.js):
+
+    export {UserDataAccess, RoleDataAccess}
+
+We don't want the UserListRow component to make an api call for the roles each time it is created,
+because it would getting the same roles every time.
+
+Instead we'll fetch the roles in main.js when the Vue app is created.
+Then the UserListRow can get the data from the 'root' Vue app.
+
+In main.js import the RoleDataAccess object:
+
+    import {RoleDataAccess as rda} from "@/api"
+
+Then add this code to the options object that is passed into the Vue constructor (in main.js):
+
+    data(){
+        return{
+            userRoles:[]
+        }
+    },
+    mounted(){
+        rda.getAllRoles()
+        .then(response => {
+            this.userRoles = response.data
+        })
+        .catch(error => console.log(error))
+    }
+
+
+All components will be able to access this data by referencing $root.userRoles
+(Note that if you want to reference it from inside a SCRIPT tag you must use 'this', like so: this.$root.userRoles )
+We'll make use of this in a bit, but first let's create a RoleDropDown component...
+
+Create a file in the components folder named RoleDropDown.vue and add this code to it:
+
+
+    <template>
+        <select>
+            <option v-for="r in roles" :key="r.id" :value="r.id" :selected="r.id == user.roleId">
+                {{ r.name }}
+            </option>
+        </select>
+    </template>
+
+    <script>
+    export default {
+        props:{
+            user: {
+                type: Object
+            },
+            roles: {
+                type: Array
+            }
+        },
+    }
+    </script>
+
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+In UserListRow.vue, import and register the RoleDropDown component:
+
+    // put this inside the script element
+    import RoleDropDown from "@/components/RoleDropDown.vue"
+
+    // put this inside the options object
+    components:{
+        RoleDropDown
+    },
+
+Now add a RoleDropDown element to the template of UserListRow (replace the text that says: Role Drop Down goes here):
+
+    <role-drop-down :user="user" :roles="$root.userRoles" />
+
+
+Next we'll emit an event when the selected role changes.
+Update the select element in the template of the RoleDropDown to look like this:
+
+    <select @change="handleChange">
+
+Add this to the options object:
+
+    methods:{
+        handleChange(evt){
+            //alert(evt.target.value);
+            this.user.roleId = evt.target.value;
+            this.$emit("user-updated", this.user);
+        }
+    }
+
+Here's where things get really messy with Vue.
+Let's say we want the Users.vue component to listen for 'user-updated' events.
+We need to emit and event from the RoleDropDown, to the UserListRow, to the UserList, and finally to the Users component
+
+In the template of the UserListRow, update the role-drop-down element to look like this:
+
+     <role-drop-down :user="user" :roles="$root.userRoles" @user-updated="$emit('user-updated', $event)" />
+
+In the template of the UserList, update the user-list-role element to look like this:
+
+    <user-list-row v-for="u in users" :key="u.id" :user="u" @user-updated="$emit('user-updated', $event)" />
+
+In the template of the Users component, update the user-list element to look like this: 
+
+    <user-list :users="users" @user-updated="handleUserUpdated" />
+
+Now add this to the options object of the Users component:
+
+    methods:{
+        handleUserUpdated(user){
+            console.log("User updated...", user);
+        }
+    }
+
+As you can see, when you have deeply nested components, it can be messy to communicate between them.
+Vue has a feature called Vuex to deal with this, but I'm not sure if we'll get into using it for this project.
+
+
+
+In the components folder, add a file called ActiveCheckBox.vue
+Then put this code in it:
+
+    <template>
+        <label>
+            <input type="checkbox" :checked="user.active == 'yes' ? true : false" @change="handleChange" />
+            Active
+        </label>
+    </template>
+
+    <script>
+    export default {
+        props:{
+            user: {
+                type: Object
+            }
+        },
+        methods:{
+            handleChange(evt){
+                //alert(evt.target.checked);
+                this.user.active = evt.target.checked ? "yes" : "no";
+                this.$emit("user-updated", this.user);
+            }
+        }
+    }
+    </script>
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+In the template of UserListRow replace the placeholder text for the checkbox with this:
+
+    <active-check-box :user="user" @user-updated="$emit('user-updated', $event)" />
+
+This should automatically import and register the ActiveCheckBox component
+

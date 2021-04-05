@@ -1,0 +1,162 @@
+Create a new project in your doc root directory:
+    
+    npx vue create vue-cli-user-manager
+
+Configuring the project:
+
+    Use the down arrow key to choose Manually select features, then press the Enter key
+
+    Use the up/down arrows and the space bar (to check or uncheck the features that you want to install), select the following features:
+        Choose Vue Version
+        Babel
+        Router
+        CSS Pre-processor
+
+    Choose 2.x for the version of Vue that you want to use
+
+    Choose Y to use History mode for the router
+
+    Choose Sass/SCSS (with node-sass)
+
+    When asked Where do you prefer placing config for Babel, ESLint, etc.
+    Choose In dedicated config files
+
+    Choose N when asked to Save this as a preset for future projects
+
+
+Look at the code in the HelloWorld component and note that you can use Sass
+in your style elements (notice the attributes in the style element):
+    <style scoped lang="scss">
+
+
+Also note that the router is already set up. Here are the files to note:
+
+    router/index.js     This is the router file
+    main.js             Imports the router file passes it into the Vue constructor call
+    App.vue             Sets up the router-view element, and two router-link elements
+
+
+Install Bootstrap:
+
+    cd into the project folder (vue-bootstrap-sample) and run the following command to install bootstrap (and it's dependencies):
+        npm install bootstrap jquery popper.js --save
+
+Setting up the SASS files
+
+    Crate a file named main.scss to the assets folder
+
+    Put the following code in the main.scss file:
+
+        // Set SASS variables here (you could get these variables from Themestr if you are color blind)
+        $primary: red;
+        // The rest of your variables can go here
+
+        // import the bootstrap sass file (from inside the node_modules folder)
+        @import '../../node_modules/bootstrap/scss/bootstrap.scss';
+
+    
+    Open the App.vue file and replace the <style> element with this:
+
+        <style lang="scss">
+            @import './assets/main.scss';
+        </style>
+
+
+
+
+Set up the Users view
+    
+    Create Users.vue in the views folder - for now just put this in it:
+
+        <template>
+            <h1>Users</h1>
+        </template>
+    
+    Update the router file:
+
+        1. Import the Users.vue component:
+
+            import Users from '../views/Users.vue'
+
+        2. Add a route to users/ with a name of Users:
+
+            { path: '/users', name: 'Users', component: Users }
+    
+    Add a router link to the User view in App.vue:
+
+        <router-link :to="{name: 'Users'}">Users</router-link>
+
+
+
+Install axios:
+
+    npm install axios --save
+
+In the src folder create a file named api.js and put this code in it:
+
+    import axios from 'axios'
+
+    const ax = axios.create({
+        baseURL: 'http://localhost/api/'
+    });
+
+    const UserDataAccess =  {
+        getAllUsers(){
+            return ax.get("users/")
+        }
+    }
+
+    export {UserDataAccess}
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Add this code to Users.vue:
+
+    <template>
+        <div class="user-list">
+            <h1>Users</h1>
+        </div>
+    </template>
+
+    <script>
+
+    import {UserDataAccess as da} from "@/api"
+
+    export default {
+        data(){
+            return {
+            users: []
+            }
+        },
+        mounted(){
+            da.getAllUsers()
+            .then(response => {
+                //console.log(response.data);
+                this.users = response.data
+            })
+            .catch(error => console.log(error));
+        }
+    }
+    </script>
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+When you run the app notice that there may be a CORs error in the console.
+A CORs request is when an ajax call is made from one domain to another
+This app runs on localhost:8080 
+which is considered to be a different domain than our api running on localhost
+By default, browsers do not allow CORs requests unless the server sends a header stating 
+that it's OK (the header is Access-Control-Allow-Origin)
+The server sends this header in response to an OPTIONS request
+
+Note that this should not be a problem on your live server because the ajax calls 
+will be coming from the same domain as the server.
+
+
+
+
+
+
+
+
+

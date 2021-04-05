@@ -1,0 +1,417 @@
+/////////////////////////////////////////////
+// The problem of mutating a prop
+/////////////////////////////////////////////
+
+You can test your components in isolation (before plugging them into the app), we'll do this to demonstrate how mutating a prop in a child component can affect the parent.
+
+First you need to install this npm packager:
+
+    npm i -g @vue/cli-service-global
+
+Create a folder named test in the project foler (vue-cli-user-manager)
+Then create a file called RoleDropDownTest.vue and put this code in it:
+
+    <template>
+        <div>
+            <role-drop-down :roles="testRoles" :user="testUser" />
+            this.user.roleId: {{ testUser.roleId}}
+            <p>This demonstrates that mutating a prop in a child component can affect a parent, and you may not want that!</p>
+        </div>
+    </template>
+
+    <script>
+
+    import RoleDropDown from '../src/components/RoleDropDown.vue'
+
+    export default {
+        components: { RoleDropDown },
+        data(){
+            return {
+                testRoles:[
+                    {
+                        "id": "1",
+                        "name": "Standard User",
+                        "description": "Normal user with no special permissions"
+                    },
+                    {
+                        "id": "2",
+                        "name": "Admin",
+                        "description": "Extra permissions"
+                    }
+                ],
+                testUser: {
+                        "id":"1",
+                        "firstName":"Joexxxxxxx",
+                        "lastName":"Smith",
+                        "email":"joe@smith.com",
+                        "roleId":"1",
+                        "password":"opensesame",
+                        "salt":"xxx",
+                        "active":"yes"
+                    }
+            }
+        }
+    }
+    </script>
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Now run this command in the terminal (from the project folder):
+
+    npx vue serve .\test\RoleDropDownTest.vue
+
+
+Later we'll see how mutating props can mess things up in our app!
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+// Add a button to the UserListRow
+// So that we navigate to a component that will allow all the details of a user to be updated
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+In the UserListRow component, update the button to emit a user-selected event and pass the user as the $event param:
+
+    <button @click="$emit('user-selected', user)">Edit</button>
+
+We want this event to go up to the Users.vue component, so we need to pass it up the from the UserList, 
+so update the user-list-row element in the  template of the UserList to look like this:
+
+    
+    <user-list-row v-for="u in users" 
+        :key="u.id" :user="u" 
+        @user-updated="$emit('user-updated', $event)" 
+        @user-selected="$emit('user-selected', $event)" />
+
+    SIDE NOTE: You could pass all events from children of this component to the parent of this component using the v-on directive, like so:
+
+        <user-list-row v-for="u in users" :key="u.id" :user="u" v-on="$listeners" />
+
+In the Users component, update the user-list element to look like this:
+
+    <user-list :users="users" @user-updated="handleUserUpdated" @user-selected="handleUserSelected" />
+
+Add this method to the Users component:
+
+    handleUserSelected(user){
+      console.log("User selected...", user);
+      // this.selectedUser = user;  // we'll uncomment this in a minute
+    }
+
+
+
+Run the app and verify that the user-selected event is getting emitted properly and that the proper user is getting passed as the $event object.
+
+
+In the User component, add a data member called selectedUser and set it to null
+Then uncomment the line in handleUserSelected that updates the selected user
+
+Update the template in the User component to look like this:
+
+    <template>
+        <div>
+            <div v-if="!selectedUser" class="user-list">
+            <h1>Users</h1>
+            <user-list :users="users" @user-updated="handleUserUpdated" @user-selected="handleUserSelected" />
+            </div>
+            <div v-else class="user-form">
+                USER FORM GOES HERE
+            </div>
+        </div>  
+    </template>
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Run the app, and notice how the v-if and v-else directives work based on the selectedUser data member
+
+Add this line of code to the handleUserUpdated() method in the Users component to set selected user to null when a user is updated,
+(this will hide the UserForm and show the UserList when a user is edited)
+
+    this.selectedUser = null;
+
+
+
+////////////////////////////////////////////////////////////////
+// The UserForm Component
+////////////////////////////////////////////////////////////////
+
+Create a file in the components folder named UserForm.vue (this will look fammiliar)
+Add this code to it (we'll modify it later)
+
+    <template>
+        <div class="user-form-container">
+            <form @submit.prevent="onSubmit">
+                <div>
+                    <label>First Name:</label>
+                    <input v-model="firstName" />
+                    <span class="validation" v-if="errors.firstName">{{errors.firstName}}</span>
+                </div>
+                <div>
+                    <label>Last Name:</label>
+                    <input v-model="lastName" />
+                    <span class="validation" v-if="errors.lastName">{{errors.lastName}}</span>
+                </div>
+                <div>
+                    <label>Email:</label>
+                    <input v-model="email" />
+                    <span class="validation" v-if="errors.email">{{errors.email}}</span>
+                </div>
+                <div>
+                    <label>Role:</label>
+                    <role-drop-down :roles="$root.userRoles" :user="user" />
+                </div>
+                <div>
+                    <label>Password:</label>
+                    <input type="password" v-model="password" />
+                    <span class="validation" v-if="errors.password">{{errors.password}}</span>
+                </div>
+                <div>
+                    <active-check-box :user="user" />
+                </div>
+                <div>
+                    <input type="submit" id="btnSubmit" name="submit button">
+                    <input type="button" @click="handleCancel" value="Cancel">
+                </div>
+            </form>
+        </div>
+    </template>
+
+    <script>
+    import ActiveCheckBox from './ActiveCheckBox.vue';
+    import RoleDropDown from './RoleDropDown.vue';
+
+    export default {
+        components: { RoleDropDown, ActiveCheckBox },
+        props: {
+            user: {
+                type: Object
+            }
+        },
+        data() {
+            return {
+                id: this.user?.id ?? 0,
+                firstName: this.user?.firstName ?? "",
+                lastName: this.user?.lastName ?? "",
+                email: this.user?.email ?? "",
+                roleId:  this.user?.roleId ?? 1, // Default to Standard User - this smells!
+                password: this.user?.password ?? "",
+                active:  this.user?.active ?? "yes", // new users will default to 'active'
+                errors: {} // This will be for input validation error messages
+            }
+        },
+        methods: {
+            onSubmit() {
+                alert("handle submit (make sure to validate the input");
+            },
+            handleCancel(){
+                this.$emit("user-form-cancelled");
+            },
+        }
+    }
+    </script>
+
+    <style scoped lang="scss">
+        label, .validation{ display: block; }
+    </style>
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+A couple of things to note:
+
+    The data members are getting copies of the properties of the user (prop), IF the user is not null (that's what the question mark means)
+
+    The style element includes the 'scoped' attribute, which means that the CSS applied to this component will not affect other components
+    (you can also use SASS code in the style element because of the lang attribute)
+
+
+In the template of the Users component replace the place holder text USER FORM GOES HERE with this: 
+
+    <user-form :user="selectedUser" @user-form-cancelled="selectedUser = null" />
+
+Note that when the cancel button is clicked in the UserForm, the Users component sets the selectedUser to null.
+
+NOW WE CAN SEE WHAT HAPPENS WHEN YOU MUTATE PROPS!
+Run the app and navigate to the Users view.
+Then click an Edit button to see the UserForm.
+
+Note that when you select a new role or click the active checkbox, the user is automatically altered.
+So if you end up clicking the Cancel button then you might believe that you haven't committed those changes.
+(we could also display both the list and the form at the same so that you can see that making these changes on the form will update the list)
+
+This behavior is the built-in 'reactivity' of Vue, when a user interface component is bound to data, the UI will 'react' to any changes to the data.
+
+To be honest, I'm not sure of the best way to handle this because there are lots of different approaches 
+to working with data in Vue. But for this project, we'll make a copy of the prop and edit the copy rather than the original.
+
+///////////////////////////////////////////////////////////////////////////////////
+// Fix the RoleDropDown and ActiveCheckBox so that they don't mutate their props
+///////////////////////////////////////////////////////////////////////////////////
+
+In the RoleDropDown component, update the handleChange() method to look like this:
+
+    handleChange(evt){
+        //alert(evt.target.value);
+        //this.user.roleId = evt.target.value; // DON"T MUTATE A PROP!
+        //this.$emit("user-updated", this.user);
+        
+        const userCopy = {...this.user};
+        userCopy.roleId = evt.target.value;
+        this.$emit("user-updated", userCopy);
+    }
+
+And in the ActiveCheckBox component, update the handleChange() method to look like this
+
+    handleChange(evt){
+        //alert(evt.target.checked);
+        //this.user.active = evt.target.checked ? "yes" : "no";  // DON'T MUTATE PROPS!!!!
+        //this.$emit("user-updated", this.user);
+
+        const userCopy = {...this.user}
+        userCopy.active = evt.target.checked ? "yes" : "no";
+        this.$emit("user-updated", userCopy);
+    }
+
+Now the problem is that we have copies of user objects being emitted, but we can work with that.
+Run the app and notice that if you press the Cancel button on the UserForm, the UserList is not affected.
+
+
+Add the handlers for user-updates from the RoleDropDown and the ActiveCheckBox (in UserForm)
+
+    <role-drop-down :roles="$root.userRoles" :user="user" @user-updated="handleRoleUpdate" />
+
+    and
+
+    <active-check-box :user="user" @user-updated="handleActiveUpdate" />
+
+
+Add the methods:
+
+    handleRoleUpdate(user){
+        this.roleId = user.roleId;
+    },
+    handleActiveUpdate(user){
+        this.active = user.active;
+    }
+
+
+Add this to the onSubmit() method (We should validate the input!)
+
+    const updatedUser = {
+        id: this.id,
+        firstName: this.firstName,
+        lastName: this.lastName,
+        email: this.email,
+        roleId: this.roleId,
+        password: this.password,
+        active: this.active
+    };
+
+    this.$emit("user-updated", updatedUser);
+
+
+In the Users component update the user-form element to look like this: 
+
+    <user-form :user="selectedUser" @user-form-cancelled="selectedUser = null" @user-updated="handleUserUpdated" />
+
+
+////////////////////////////
+// Adding New Users
+////////////////////////////
+
+Add this button to the template of the Users component (you can put it just above the user-list element):
+
+    <button @click="selectedUser = {}">Add New User</button>
+
+This sets the selectedUser data member to an empty object, which get's passed as a prop to the UserForm
+(and shows the UserForm)
+
+Run the app and create a new user, when the Submit button is pressed in the UserForm, the user-updated event is emitted
+This is how we'll know whether to POST or PUT the user.
+
+
+
+///////////////////////////////////////
+// API - putting and posting users
+///////////////////////////////////////
+Now we need to update the api module to include methods to put and post users to our api.
+
+But first we should note that the strategy is to make all api calls from the Users component.
+
+We could spread these api calls to various child components. For example, we actually do an api call to update a user from the RoleDropDown.
+
+But I think it makes more sense to keep all the api calls in one place.
+
+This will makie is easier to transition to using Vuex (which is a data 'store') 
+
+Add these two methods to the UserDataAccess object in the api.js file:
+
+    insertUser(user){
+        return ax.post("users/", user).catch((error) => errorHandler("Error Updating User:" + error));
+    },
+    updateUser(user){
+        return ax.put("users/" + user.id, user).catch((error) => errorHandler("Error Inserting User:" + error));
+    }
+
+Note that we are letting the UserDataAccess object handle errors, which is not what we did for the getUsers() method.
+You also need to add the errorHandler() function to the api.js file (you can put it just before the export statement):
+
+    function errorHandler(msg){
+        alert(msg);
+    }
+
+We could have a big discussion about how to handle errors.
+We should also use the errorHandler for the getAllUsers() method
+(we can remove the catch() when calling getAllUsers() in the Users components too)
+
+Add this IF statement to the handleUserUpdated() method in the Users component:
+
+    if(user.id){
+        da.updateUser(user)
+          .then(resp => {
+            console.log(resp);
+            // TODO: replace the user in this.users data member with the user parameter (remember it's a copy)
+          });
+      }else{
+        da.insertUser(user)
+          .then(resp => {
+            console.log(resp);
+            // TODO: add the user param to this.users
+        });
+      }
+
+Run the app and check the console.
+Note that I had lots of CORS issues that I had to solve and it was frustrating 
+because I was getting mixes up on my routes (the PUT request uses a different action method than the POST)
+
+Update the da.updateUser() method call to look like this (in the Users component)
+(take a look at my notes and the hyperlink I included on Vue.set())
+
+    da.updateUser(user).then(resp => {
+        // get the index of the user to replace
+        const indexOfUser = this.users.findIndex(u => u.id === user.id);
+        // this.users[indexOfUser] = user; // this would work if Vue truely was reactive!!!
+        this.$set(this.users, indexOfUser, user);
+    });
+
+Finally, update the da.insertUser() method call to look like this:
+
+    da.insertUser(user).then(resp => {
+        const newUser = resp.data;
+        this.$set(this.users, this.users.length, user);
+    });
+
+Why did we have to use Vue.set()  aka this.$set()????
+The users data member is supposed to be reactive, so that if it get's changed, all the components get updated (mainly the UserList)
+The problem is that we didn't mutate this.users like so:
+
+    this.users = [];   // here we set this.users to a new value (a new array)
+
+If we assigned a whole new array to this.users, then the UI would react to this change.
+But if you push new users onto the array, or change the properties of users within the array, then Vue does not detect these changes and cannot react.
+So we have to help it be reactive by using Vue.set()
+
+For more info on Vue.set():   https://www.telerik.com/blogs/so-what-actually-is-vue-set
+
+
+
