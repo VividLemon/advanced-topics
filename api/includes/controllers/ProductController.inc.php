@@ -30,7 +30,7 @@ class ProductController extends Controller{
 				// start off with just this inside this braanch
 				$data = $this->getJSONRequestBody();
 
-				$product = new Product($data);
+				$product = $da->convertRowToModel($data);
 				if($product->isValid()){
 					try{
 						$product = $da->insert($product);
@@ -60,6 +60,12 @@ class ProductController extends Controller{
 
 				echo $jsonProducts;
 				die();
+				break;
+			case "OPTIONS":
+				// AJAX CALLS WILL OFTEN SEND AN OPTIONS REQUEST BEFORE A PUT OR DELETE
+				// TO SEE IF THE PUT/DELETE WILL BE ALLOWED
+				$this->allowCors();
+				header("Access-Control-Allow-Methods: GET,POST");
 				break;
 			default:
 				// set a 400 header (invalid request)
@@ -96,7 +102,7 @@ class ProductController extends Controller{
 				break;
 			case "PUT":
 				$data = $this->getJSONRequestBody();
-				$product = new Product($data);
+				$product = $da->convertRowToModel($data);
 				if($product->isValid()){
 					try{
 						if($da->update($product)){
@@ -118,11 +124,12 @@ class ProductController extends Controller{
 			case "DELETE":
 				echo("DELETE PRODUCT $id");
 				break;
-			case "OPTIONS":
-				// AJAX CALLS WILL OFTEN SEND AN OPTIONS REQUEST BEFORE A PUT OR DELETE
-				// TO SEE IF THE PUT/DELETE WILL BE ALLOWED
-				header("Access-Control-Allow-Methods: GET,PUT,DELETE");
-				break;
+				case "OPTIONS":
+					// AJAX CALLS WILL OFTEN SEND AN OPTIONS REQUEST BEFORE A PUT OR DELETE
+					// TO SEE IF THE PUT/DELETE WILL BE ALLOWED
+					$this->allowCors();
+					header("Access-Control-Allow-Methods: GET,PUT,DELETE");
+					break;
 			default:
 				// set a 400 header (invalid request)
 				$this->sendHeader(400);

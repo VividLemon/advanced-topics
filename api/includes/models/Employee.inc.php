@@ -3,11 +3,7 @@ include_once("Model.inc.php");
 
 class Employee extends Model
 {
-	public $id;
-    public $user_id;
-    public $dob;
-    public $salary;
-    public $part_time;
+
 	// Put the rest of the instance vars here
 
 	/**
@@ -16,16 +12,17 @@ class Employee extends Model
 	 *										NOTE: the $args param is OPTIONAL, if it is not passed in
 	 * 										The default will be an empty array: []									
 	 */
-	public function __construct($args = []){
+	public function __construct(
+		public int $id = 0,
+		public int $user_id = 0,
+		public string $employee_dob = "",
+		public int $employee_salary = 0,
+		public string $employee_part_time = "no",
 
-		$this->id = $args['id'] ?? 0;
-        $this->user_id = $args['user_id'];
-        $this->dob = $args['dob']; #TODO
-        $this->salary = $args['salary'] ?? 0;
-        $this->part_time = $args['part_time'] ?? false;
-		// set the rest of the instance vars
-		
+	){
+		assert($employee_part_time == "yes" || $employee_part_time == "no");
 	}
+
 
 	/**
 	* Validates the state of a this Model object. 
@@ -43,20 +40,24 @@ class Employee extends Model
 		$this->validationErrors = [];
 
 		// valide the id
-		if(!$this->id >= 0){
+		if(!($this->id >= 0)){
 			$valid = false;
 			$this->validationErrors['id'] = "The id is not valid";
 		}
-        if(!$this->user_id >= 0 || isset($this->user_id)){
+        if(!isset($this->user_id) || !($this->user_id >= 0)){
             $valid = false;
             $this->validationErrors['user_id'] = "The user id is not valid.";
         }
-        if(!$this->salary >= 0){
+        if(!($this->employee_salary >= 0)){
             $valid = false;
-            $this->validationErrors['salary'] = "The salary must be a valid number";
+            $this->validationErrors['emp_salary'] = "The salary must be a valid number";
         }
+		if(!($this->employee_part_time == "yes" || $this->employee_part_time == "no")){
+			$valid = false;
+			$this->validationErrors['employee_part_time'] = "Employee part time must be yes or no";
+		}
 #TODO add more?
-
+		return $valid;
 		// validate the rest of the instance vars
 	}
 

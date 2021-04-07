@@ -5,14 +5,7 @@ class User extends Model
 {
 
 	// INSTANCE VARIABLES
-	public $id;
-	public $firstName;
-	public $lastName;
-	public $email;
-	public $roleId;
-	public $password;
-	public $salt;
-	public $active;
+
 
 	
 	/**
@@ -21,17 +14,18 @@ class User extends Model
 	 *										NOTE: the $args param is OPTIONAL, if it is not passed in
 	 * 										The default will be an empty array: []									
 	 */
-	public function __construct($args = []){
-
-		// NOTE that in PHP we use bracket notation for associative arrays
-		$this->id = $args['id'] ?? 0;
-		$this->firstName = $args['firstName'] ?? "";
-		$this->lastName = $args['lastName'] ?? "";
-		$this->email = $args['email'] ?? "";
-		$this->roleId = $args['roleId'] ?? "";
-		$this->password = $args['password'] ?? "";
-		$this->salt = $args['salt'] ?? "";
-		$this->active = $args['active'] ?? "";
+	public function __construct(
+		public int $id = 0,
+		public string $user_first_name = "",
+		public string $user_last_name = "",
+		public string $user_email = "",
+		public int $user_roleId = 0,
+		public string $user_password = "",
+		public string $user_salt = "",
+		public string $user_active = "",
+	)
+	{
+		
 	}
 
 	/**
@@ -55,55 +49,55 @@ class User extends Model
 		}
 
 		// validate first name
-		if (empty($this->firstName)) {
+		if (empty($this->user_first_name)) {
 			$valid = false;
-			$this->validationErrors['firstName'] = "First Name is required";
-		}else if(strlen($this->firstName) > 30){
+			$this->validationErrors['user_first_name'] = "First Name is required";
+		}else if(strlen($this->user_first_name) > 30){
 			$valid = false;
-			$this->validationErrors['firstName'] = "First Name must be 30 characters or less";
+			$this->validationErrors['user_first_name'] = "First Name must be 30 characters or less";
 		}
 
 		// validate lastName
-		if (empty($this->lastName)) {
+		if (empty($this->user_last_name)) {
 			$valid = false;
-			$this->validationErrors['lastName'] = "Last Name is required";
-		}else if(strlen($this->lastName) > 30){
+			$this->validationErrors['user_last_name'] = "Last Name is required";
+		}else if(strlen($this->user_last_name) > 30){
 			$valid = false;
-			$this->validationErrors['lastName'] = "Last Name must be 30 characters or less";
+			$this->validationErrors['user_last_name'] = "Last Name must be 30 characters or less";
 		}
 
 		// validate email
-		if (empty($this->email)){
+		if (empty($this->user_email)){
 			$valid = false;
-			$this->validationErrors['email'] = "Email is required";
-		}else if(!filter_var($this->email, FILTER_VALIDATE_EMAIL)){
+			$this->validationErrors['user_email'] = "Email is required";
+		}else if(!filter_var($this->user_email, FILTER_VALIDATE_EMAIL)){
 			$valid = false;
-			$this->validationErrors['email'] = "The email address is not valid";
-		}else if(strlen($this->email) > 255){
+			$this->validationErrors['user_email'] = "The email address is not valid";
+		}else if(strlen($this->user_email) > 255){
 			$valid = false;
-			$this->validationErrors['email'] = "The email address must not be more than 255 characters";
+			$this->validationErrors['user_email'] = "The email address must not be more than 255 characters";
 		}
 
 		// role id should be a number greater than zero
-		if (!$this->roleId > 0) {
+		if (!$this->user_roleId > 0) {
 			$valid = false;
-			$this->validationErrors['roleId'] = "Role id is not valid";
+			$this->validationErrors['user_roleId'] = "Role id is not valid";
 		}
 
 		// password should not be empty
 		// do we need to enforce password strength????
 		// the length should not be validated because we'll be using encryption, which should force it to be a certain length
-		if (empty($this->password)) {
+		if (empty($this->user_password)) {
 			$valid = false;
-			$this->validationErrors['password'] = "Password is required";
+			$this->validationErrors['user_password'] = "Password is required";
 		}
 
 		// salt does not need validation
 
 		// active must be either 'yes' or 'no'
-		if ($this->active != "yes" && $this->active != "no") {
+		if ($this->user_active != "yes" && $this->active != "no") {
 			$valid = false;
-			$this->validationErrors['active'] = "Active setting is not valid";
+			$this->validationErrors['user_active'] = "Active setting is not valid";
 		}
 
 		return $valid;

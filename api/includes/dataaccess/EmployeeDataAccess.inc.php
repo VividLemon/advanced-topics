@@ -1,7 +1,7 @@
 <?php
 
 require_once("DataAccess.inc.php");
-include_once(__DIR__ . "/../models/employee.inc.php"); // I had problems including this file, not sure why!
+include_once(__DIR__ . "/../models/Employee.inc.php"); // I had problems including this file, not sure why!
 
 
 class employeeDataAccess extends DataAccess{
@@ -23,11 +23,11 @@ class employeeDataAccess extends DataAccess{
 	    * @return {array}
 	    */
 	    function convertModelToRow($employee){
-	    	$row['employee_id'] = mysqli_real_escape_string($this->link, $employee->id);
+	    	$row['id'] = mysqli_real_escape_string($this->link, $employee->id);
             $row['user_id'] = mysqli_real_escape_string($this->link, $employee->user_id);
-	    	$row['emp_date_of_birth'] = mysqli_real_escape_string($this->link, $employee->dob);
-            $row['emp_salary'] = mysqli_real_escape_string($this->link, $employee->salary);
-	    	$row['emp_part_time'] = mysqli_real_escape_string($this->link, $employee->part_time);
+	    	$row['employee_dob'] = mysqli_real_escape_string($this->link, $employee->employee_dob);
+            $row['employee_salary'] = mysqli_real_escape_string($this->link, $employee->employee_salary);
+	    	$row['employee_part_time'] = mysqli_real_escape_string($this->link, $employee->employee_part_time);
 
 			return $row;
 	    }
@@ -42,11 +42,13 @@ class employeeDataAccess extends DataAccess{
 	    function convertRowToModel($row){
 
 	    	$employee = new employee();
-			$employee->id = htmlentities($row['employee_id']);
+			if(isset($row['id'])){
+				$employee->id = htmlentities($row['id']);
+			}
             $employee->user_id = htmlentities($row['user_id']);
-			$employee->dob = htmlentities($row['emp_date_of_birth']);
-            $employee->salary = htmlentities($row['emp_salary']);
-            $employee->part_time = htmlentities($row['emp_part_time']);
+			$employee->employee_dob = htmlentities($row['employee_dob']);
+            $employee->employee_salary = htmlentities($row['employee_salary']);
+            $employee->employee_part_time = htmlentities($row['employee_part_time']);
 			return $employee;
 	    }
 
@@ -57,7 +59,7 @@ class employeeDataAccess extends DataAccess{
 	    * @return {employee}		Returns an instance of a model object 
 	    */
 	    function getById($id){
-			$qStr = "SELECT employee_id, user_id, emp_date_of_birth, emp_salary, emp_part_time FROM employees WHERE employee_id = " . mysqli_real_escape_string($this->link, $id);
+			$qStr = "SELECT employee_id as id, user_id, employee_dob, employee_salary, employee_part_time FROM employees WHERE employee_id = " . mysqli_real_escape_string($this->link, $id);
 			$result = mysqli_query($this->link, $qStr) or $this->handleError(mysqli_error($this->link));
 			if($result->num_rows == 1){
 				$row = mysqli_fetch_assoc($result);
@@ -76,7 +78,7 @@ class employeeDataAccess extends DataAccess{
 	    * @return {array}		Returns an array of model objects
 	    */
 	    function getAll($args = []){
-			$qStr = "SELECT employee_id, user_id, emp_date_of_birth, emp_salary, emp_part_time FROM employees ";
+			$qStr = "SELECT employee_id as id, user_id, employee_dob, employee_salary, employee_part_time FROM employees ";
 			// foreach($args as $value){
 			// 	$qStr .= trim($value); 
 			// 	$qStr .= " ";
@@ -99,16 +101,17 @@ class employeeDataAccess extends DataAccess{
 	    */
 	    function insert($employee){
 			$row = $this->convertModelToRow($employee);
+			$row['employee_dob'] = parent::convertDateForMySQL($row['employee_dob']);
 			$qStr = "INSERT INTO employees (
 				user_id, 
-				emp_date_of_birth,
-                emp_salary,
-                emp_part_time
+				employee_dob,
+                employee_salary,
+                employee_part_time
 				) VALUES (
 				'{$row['user_id']}',
-                '{$row['emp_date_of_birth']}',
-				'{$row['emp_salary']}',
-				'{$row['emp_part_time']}'
+                '{$row['employee_dob']}',
+				'{$row['employee_salary']}',
+				'{$row['employee_part_time']}'
 				)";
 
 			$result = mysqli_query($this->link, $qStr) or $this->handleError(mysqli_error($this->link));
@@ -127,14 +130,14 @@ class employeeDataAccess extends DataAccess{
 	    * @return {object}		Returns the same model object that was passed in as the param
 	    */
 	    function update($employee){
-			$row = $this->convertModelToRow($user);
+			$row = $this->convertModelToRow($employee);
 
 			$qStr = "UPDATE employees SET
 					user_id = '{$row['user_id']}',
-					emp_date_of_birth = '{$row['emp_date_of_birth']}',
-					emp_salary = '{$row['emp_salary']}',
-					emp_part_time = '{$row['emp_part_time']}'
-				WHERE employee_id = " . $row['employee_id'];
+					employee_dob = '{$row['employee_dob']}',
+					employee_salary = '{$row['employee_salary']}',
+					employee_part_time = '{$row['employee_part_time']}'
+				WHERE employee_id = " . $row['id'];
 
 			$result = mysqli_query($this->link, $qStr) or $this->handleError(mysqli_error($this->link)); 
 

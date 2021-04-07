@@ -2,7 +2,7 @@
 
 include_once("Controller.inc.php");
 include_once(__DIR__ . "/../models/Employee_department.inc.php");
-include_once(__DIR__ . "/../dataaccess/Employee_departmentDataAccess.inc.php");
+include_once(__DIR__ . "/../dataaccess/EmployeeDepartmentDataAccess.inc.php");
 
 
 class EmployeeDepartmentController extends Controller{
@@ -22,7 +22,7 @@ class EmployeeDepartmentController extends Controller{
 			case "POST":
 				$data = $this->getJSONRequestBody();
 
-				$employee_department = new Department($data);
+				$employee_department = $da->convertRowToModel($data);
 
 				if($employee_department->isValid()){
 					try{
@@ -52,13 +52,19 @@ class EmployeeDepartmentController extends Controller{
 				echo $json_employee_departments;
 				die();
 				break;
+			case "OPTIONS":
+				// AJAX CALLS WILL OFTEN SEND AN OPTIONS REQUEST BEFORE A PUT OR DELETE
+				// TO SEE IF THE PUT/DELETE WILL BE ALLOWED
+				$this->allowCors();
+				header("Access-Control-Allow-Methods: GET,POST");
+				break;
 			default:
 				// set a 400 header (invalid request)
 				$this->sendHeader(400);
 		}
 	}
 
-	public function handle_single_employee(){
+	public function handle_single_department(){
 		
 		$url_path = $this->getUrlPath();
 		$url_path = $this->removeLastSlash($url_path);
@@ -66,7 +72,7 @@ class EmployeeDepartmentController extends Controller{
 
 		// extract the employee_department id
 		$id = null;		
-		if(preg_match('/^employee_departments\/([0-9]*\/?)$/', $url_path, $matches)){
+		if(preg_match('/^departments\/([0-9]*\/?)$/', $url_path, $matches)){
 			$id = $matches[1];
 		}
 		
@@ -84,7 +90,7 @@ class EmployeeDepartmentController extends Controller{
 				break;
 			case "PUT":
 				$data = $this->getJSONRequestBody();
-				$employee_department = new Department($data);
+				$employee_department = $da->convertRowToModel($data);
 				if($employee_department->isValid()){
 					try{
 						if($da->update($employee_department)){

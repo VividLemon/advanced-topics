@@ -3,7 +3,6 @@ include_once("Model.inc.php");
 
 class Employee_department extends Model
 {
-	public $id;
 	// Put the rest of the instance vars here
 
 	/**
@@ -12,15 +11,16 @@ class Employee_department extends Model
 	 *										NOTE: the $args param is OPTIONAL, if it is not passed in
 	 * 										The default will be an empty array: []									
 	 */
-	public function __construct($args = []){
+	
+	 public function __construct(
+		public int $id = 0,
+		public string $department_name = "",
+		public int $department_staff_count = 0,
+		public int $employee_id = 0,
+	 )
+	 {
 
-		$this->id = $args['id'] ?? 0;
-        $this->name = $args['name'] ?? "";
-        $this->staff_count = $args['staff_count'] ?? 0;
-        $this->employee_id = $args['employee_id'] ?? 0;
-		// set the rest of the instance vars
-		
-	}
+	 }
 
 	/**
 	* Validates the state of a this Model object. 
@@ -38,19 +38,20 @@ class Employee_department extends Model
 		$this->validationErrors = [];
 
 		// valide the id
-		if(!$this->id >= 0){
+		if(!($this->id >= 0)){
 			$valid = false;
 			$this->validationErrors['id'] = "The id is not valid";
 		}
-		if(!$this->name){
+		if(!$this->department_name){
 			$valid = false;
 			$this->validationErrors['name'] = "The department name is not valid";
 		}
-		if(!$this->staff_count > 0){
+		if(!$this->department_staff_count > 0){
 			$valid = false;
 			$this->validationErrors['staff_count'] = "The staff count must be greater than 0";
 		}
-
+		
+		return $valid;
 		// validate the rest of the instance vars
 	}
 

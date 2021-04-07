@@ -25,10 +25,11 @@ class productDataAccess extends DataAccess{
 	    * @return {array}
 	    */
 	    function convertModelToRow($product){
-	    	$row['product_id'] = mysqli_real_escape_string($this->link, $product->id);
-	    	$row['product_name'] = mysqli_real_escape_string($this->link, $product->name);
-	    	$row['product_desc'] = mysqli_real_escape_string($this->link, $product->description);
-	    	$row['product_price'] = mysqli_real_escape_string($this->link, $product->price);
+	    	$row['id'] = mysqli_real_escape_string($this->link, $product->id);
+	    	$row['product_name'] = mysqli_real_escape_string($this->link, $product->product_name);
+	    	$row['product_desc'] = mysqli_real_escape_string($this->link, $product->product_desc);
+	    	$row['product_price'] = mysqli_real_escape_string($this->link, $product->product_price);
+			$row['type_id'] = mysqli_real_escape_string($this->link, $product->type_id);
 			return $row;
 	    }
 
@@ -41,9 +42,13 @@ class productDataAccess extends DataAccess{
 	    */
 	    function convertRowToModel($row){
 	    	$product = new product();
-            $product->name = htmlentities($row['product_name']);
-            $product->desc = htmlentities($row['product_desc']);
-            $product->price = htmlentities($row['product_price']);
+			if(isset($row['id'])){
+				$product->id = htmlentities($row['id']);
+			}
+            $product->product_name = htmlentities($row['product_name']);
+            $product->product_desc = htmlentities($row['product_desc']);
+            $product->product_price = htmlentities($row['product_price']);
+			$product->type_id = htmlentities($row['type_id']);
             return $product;
 	    }
 
@@ -54,8 +59,8 @@ class productDataAccess extends DataAccess{
 	    * @return {product}		Returns an instance of a model object 
 	    */
 	    function getById($id){
-            $qstr = "SELECT product_id, product_name, product_desc, product_price FROM products WHERE product_id = " . mysqli_real_escape_string($this->link, $id);
-            $result = mysqli_real_escape_string($this->link, $qstr) or $this->handleError(mysqli_error($this->link));
+            $qstr = "SELECT product_id as id, product_name, product_desc, product_price, type_id FROM products WHERE product_id = " . mysqli_real_escape_string($this->link, $id);
+            $result = mysqli_query($this->link, $qstr) or $this->handleError(mysqli_error($this->link));
             if($result->num_rows == 1){
                 $row = mysqli_fetch_assoc($result);
                 $product = $this->convertRowToModel($row);
@@ -73,8 +78,9 @@ class productDataAccess extends DataAccess{
 	    * @return {array}		Returns an array of model objects
 	    */
 	    function getAll($args = []){
-            $qstr = "SELECT * FROM products";
+            $qstr = "SELECT product_id as id, product_name, product_desc, product_price, type_id FROM products";
             $result = mysqli_query($this->link, $qstr) or $this->handleError(mysqli_error($this->link));
+			$all = array();
             while($row = mysqli_fetch_assoc($result)){
                 $product = $this->convertRowToModel($row);
                 $all[] = $product;
@@ -91,14 +97,16 @@ class productDataAccess extends DataAccess{
 	    */
 	    function insert($product){
             $row = $this->convertModelToRow($product);
-			$qStr = "INSERT INTO user_roles (
+			$qStr = "INSERT INTO products (
 				product_name, 
 				product_desc,
-                product_price
+                product_price,
+				type_id
 				) VALUES (
 				'{$row['product_name']}',
 				'{$row['product_desc']}',
-                '{$row['product_price']}'
+                '{$row['product_price']}',
+				'{$row['type_id']}'
 				)";
 
 			$result = mysqli_query($this->link, $qStr) or $this->handleError(mysqli_error($this->link));
@@ -117,13 +125,14 @@ class productDataAccess extends DataAccess{
 	    * @return {object}		Returns the same model object that was passed in as the param
 	    */
 	    function update($product){
-            $row = $this->convertModelToRow($user);
+            $row = $this->convertModelToRow($product);
 
 			$qStr = "UPDATE products SET
 					product_name = '{$row['product_name']}',
 					product_desc = '{$row['product_desc']}',
-					product_price = '{$row['product_price']}'
-				WHERE product_id = " . $row['product_id'];
+					product_price = '{$row['product_price']}',
+					type_id = '{$row['type_id']}'
+				WHERE product_id = " . $row['id'];
 
 			$result = mysqli_query($this->link, $qStr) or $this->handleError(mysqli_error($this->link)); 
 

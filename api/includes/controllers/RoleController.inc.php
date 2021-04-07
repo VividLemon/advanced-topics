@@ -24,7 +24,7 @@ class RoleController extends Controller{
 				// start off with just this inside this braanch
 				$data = $this->getJSONRequestBody();
 
-				$role = new Role($data);
+				$role = $da->convertRowToModel($data);
 				if($role->isValid()){
 					try{
 						$role = $da->insert($role);
@@ -51,6 +51,12 @@ class RoleController extends Controller{
 				$this->setContentType("json");
 				echo $json_roles;
 				die();
+				break;
+			case "OPTIONS":
+				// AJAX CALLS WILL OFTEN SEND AN OPTIONS REQUEST BEFORE A PUT OR DELETE
+				// TO SEE IF THE PUT/DELETE WILL BE ALLOWED
+				$this->allowCors();
+				header("Access-Control-Allow-Methods: GET,POST");
 				break;
 			default:
 				// set a 400 header (invalid request)
@@ -84,7 +90,7 @@ class RoleController extends Controller{
 				break;
 			case "PUT":
 				$data = $this->getJSONRequestBody();
-				$role = new role($data);
+				$role = $da->convertRowToModel($data);
 				if($role->isValid()){
 					try{
 						if($da->update($role)){

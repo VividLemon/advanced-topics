@@ -3,9 +3,7 @@ include_once("Model.inc.php");
 
 class Role extends Model
 {
-	public $id;
-	public $name;
-	public $description;
+	
 
 	/**
 	 * Constructor for creating Contact model objects
@@ -13,11 +11,11 @@ class Role extends Model
 	 *										NOTE: the $args param is OPTIONAL, if it is not passed in
 	 * 										The default will be an empty array: []									
 	 */
-	public function __construct($args = []){
-
-		$this->id = $args['id'] ?? 0;
-		$this->name = $args['name'] ?? "";
-		$this->description = $args['description'] ?? "";
+	public function __construct(
+		public int $id = 0,
+		public string $role_name = "",
+		public string $role_desc = "",
+	){
 		
 	}
 
@@ -35,25 +33,25 @@ class Role extends Model
 		$this->validationErrors = [];
 
 
-		if(!$this->id >= 0){
+		if(!($this->id >= 0)){
 			$valid = false;
 			$this->validationErrors['id'] = "ID is not valid";
 		}
 
 		// name should be 30 characters or less
 		// description should be 200 characters or less
-		if(empty($this->name)){
+		if(empty($this->role_name)){
 			$valid = false;
 			$this->validationErrors['name'] = "Name is required";
-		}else if(strlen($this->name) > 30){
+		}else if(strlen($this->role_name) > 30){
 			$valid = false;
 			$this->validationErrors['name'] = "Name must be less than 30 characters";
 		}
 
-		if(empty($this->description)){
+		if(empty($this->role_desc)){
 			$valid = false;
 			$this->validationErrors['description'] = "Description is required";
-		}else if(strlen($this->description) > 200){
+		}else if(strlen($this->role_desc) > 200){
 			$valid = false;
 			$this->validationErrors['description'] = "Description must be less than 200 characters";
 		}

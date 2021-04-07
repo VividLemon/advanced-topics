@@ -6,13 +6,14 @@
 include_once("includes/config.inc.php");
 include_once("includes/Router.inc.php");
 
-// Get the requested url path (thanks to the magic of mod_rewrite)
+// Get the requested url path (thanks to the m6agic of mod_rewrite)
 // Note that the .htaccess file is configured to redirect to this page
 // and append the requested path to the query string, for example: index.php?url_path=users/1
 $url_path = $_GET['url_path'] ?? "";
 //die($url_path);
 
 if($url_path == ""){
+	phpinfo();
 	die("show the api documentation page");
 }
 
@@ -23,10 +24,10 @@ $routes = [
 	"roles/:id" => ["controller" => "RoleController", "action" => "handle_single_role"],
 	"employees/" => ["controller" => "EmployeeController", "action" => "handle_employees"],
 	"employees/:id" => ["controller" => "EmployeeController", "action" => "handle_single_employee"],
-	"employee_departments/" => ["controller" => "EmployeeDepartmentController", "action" => "handle_department"],
-	"employee_departments/:id" => ["controller" => "EmployeeDepartmentController", "action" => "handle_single_department"],
-	"products/" => ["controller" => "ProductsController", "action" => "handle_products"],
-	"products/:id" => ["controller" => "ProductsController", "action" => "handle_single_product"]
+	"departments/" => ["controller" => "EmployeeDepartmentController", "action" => "handle_employee_departments"],
+	"departments/:id" => ["controller" => "EmployeeDepartmentController", "action" => "handle_single_department"],
+	"products/" => ["controller" => "ProductController", "action" => "handle_products"],
+	"products/:id" => ["controller" => "ProductController", "action" => "handle_single_product"]
 ];
 
 $router = new Router($routes);

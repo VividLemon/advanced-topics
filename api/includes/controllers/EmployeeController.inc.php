@@ -23,7 +23,7 @@ class EmployeeController extends Controller{
 			case "POST":
 				$data = $this->getJSONRequestBody();
 
-				$employee = new Employee($data);
+				$employee = $da->convertRowToModel($data);
 
 				if($employee->isValid()){
 					try{
@@ -52,6 +52,12 @@ class EmployeeController extends Controller{
 				$this->setContentType("json");
 				echo $json_employees;
 				die();
+				break;
+			case "OPTIONS":
+				// AJAX CALLS WILL OFTEN SEND AN OPTIONS REQUEST BEFORE A PUT OR DELETE
+				// TO SEE IF THE PUT/DELETE WILL BE ALLOWED
+				$this->allowCors();
+				header("Access-Control-Allow-Methods: GET,POST");
 				break;
 			default:
 				// set a 400 header (invalid request)
@@ -85,7 +91,7 @@ class EmployeeController extends Controller{
 				break;
 			case "PUT":
 				$data = $this->getJSONRequestBody();
-				$employee = new employee($data);
+				$employee = $da->convertRowToModel($data);
 				if($employee->isValid()){
 					try{
 						if($da->update($employee)){

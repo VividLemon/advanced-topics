@@ -26,12 +26,13 @@
         document.getElementById("btnPostUser").addEventListener("click", () => {
 
             const user = {
-                firstName: "bill",
-                lastName: "Smith",
-                email: "bill@bill.com",
-                roleId: 1,
-                password: "test",
-                active: "yes"
+                user_first_name: "bill",
+                user_last_name: "Smith",
+                user_email: "bill@bifffll.com",
+                user_role: 1,
+                user_password: "test",
+                user_salt: "",
+                user_active: "yes"
             };
 
             ax.post("users/", user)
@@ -42,16 +43,22 @@
         document.getElementById("btnPutUser").addEventListener("click", () => {
             const user = {
                 id: 1,
-                firstName: "Bill",
-                lastName: "Joe",
-                email: "Bil@ffaasffsldoe.com",
-                roleId: 1,
-                password: "test",
-                active: "yes"
+                user_first_name: "Bill",
+                user_last_name: "Joe",
+                user_email: "Bil@ffaasffsldoe.com",
+                user_role: 1,
+                user_password: "test",
+                user_salt: "",
+                user_active: "yes"
             };
             ax.put(`users/${user.id}`, user)
                 .then(resp => console.log(resp))
                 .catch(err => console.log(err));
+        });
+
+        document.getElementById("btnDeleteUser").addEventListener("click", () => {
+            const userId = 1;
+            ax.delete(`users/${userId}`).then(resp => console.log(resp)).catch(err => console.log(err));
         });
 
         // products
@@ -74,12 +81,10 @@
         document.getElementById("btnPostProduct").addEventListener("click", () => {
 
             const product = {
-                firstName: "bill",
-                lastName: "Smith",
-                email: "bill@bill.com",
-                roleId: 1,
-                password: "test",
-                active: "yes"
+                product_name: "producttttt",
+                product_desc: "desccription",
+                product_price: 11,
+                type_id: 1,
             };
 
             ax.post("products/", product)
@@ -90,12 +95,10 @@
         document.getElementById("btnPutProduct").addEventListener("click", () => {
             const product = {
                 id: 1,
-                firstName: "Bill",
-                lastName: "Joe",
-                email: "Bil@ffaasffsldoe.com",
-                roleId: 1,
-                password: "test",
-                active: "yes"
+                product_name: "producttttt",
+                product_desc: "desccription",
+                product_price: 11,
+                type_id: 1
             };
             ax.put(`products/${product.id}`, product)
                 .then(resp => console.log(resp))
@@ -122,12 +125,9 @@
         document.getElementById("btnPostDepartment").addEventListener("click", () => {
 
             const department = {
-                firstName: "bill",
-                lastName: "Smith",
-                email: "bill@bill.com",
-                roleId: 1,
-                password: "test",
-                active: "yes"
+                department_name: "spooooooon",
+                department_staff_count: 2,
+                employee_id: 1
             };
 
             ax.post("departments/", department)
@@ -138,12 +138,9 @@
         document.getElementById("btnPutDepartment").addEventListener("click", () => {
             const department = {
                 id: 1,
-                firstName: "Bill",
-                lastName: "Joe",
-                email: "Bil@ffaasffsldoe.com",
-                roleId: 1,
-                password: "test",
-                active: "yes"
+                department_name: "Bilzasdfl",
+                department_staff_count: 222,
+                employee_id: 2
             };
             ax.put(`departments/${department.id}`, department)
                 .then(resp => console.log(resp))
@@ -170,12 +167,11 @@
         document.getElementById("btnPostEmployee").addEventListener("click", () => {
 
             const Employee = {
-                firstName: "bill",
-                lastName: "Smith",
-                email: "bill@bill.com",
-                roleId: 1,
-                password: "test",
-                active: "yes"
+                id: 3,
+                user_id: 4,
+                employee_dob: "2001-01-01",
+                employee_salary: 22,
+                employee_part_time: "yes"
             };
 
             ax.post("employees/", Employee)
@@ -186,12 +182,10 @@
         document.getElementById("btnPutEmployee").addEventListener("click", () => {
             const Employee = {
                 id: 1,
-                firstName: "Bill",
-                lastName: "Joe",
-                email: "Bil@ffaasffsldoe.com",
-                roleId: 1,
-                password: "test",
-                active: "yes"
+                user_id: 1,
+                employee_dob: "2001-01-01",
+                employee_salary: 22,
+                employee_part_time: "yes"
             };
             ax.put(`employees/${Employee.id}`, Employee)
                 .then(resp => console.log(resp))
@@ -218,12 +212,8 @@
     document.getElementById("btnPostRole").addEventListener("click", () => {
 
         const Role = {
-            firstName: "bill",
-            lastName: "Smith",
-            email: "bill@bill.com",
-            roleId: 1,
-            password: "test",
-            active: "yes"
+            role_name: "bbbbbbxxxxxx",
+            role_desc: "bbbbbbbeeeeee"
         };
 
         ax.post("roles/", Role)
@@ -234,12 +224,8 @@
     document.getElementById("btnPutRole").addEventListener("click", () => {
         const Role = {
             id: 1,
-            firstName: "Bill",
-            lastName: "Joe",
-            email: "Bil@ffaasffsldoe.com",
-            roleId: 1,
-            password: "test",
-            active: "yes"
+            role_name: "flaje",
+            role_desc: "beeeeeeeflkj"
         };
         ax.put(`roles/${Role.id}`, Role)
             .then(resp => console.log(resp))

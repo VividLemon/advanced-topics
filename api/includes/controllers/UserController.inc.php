@@ -23,14 +23,14 @@ class UserController extends Controller{
 	public function handleUsers(){
 
 		$da = new UserDataAccess($this->link);
-		// $this->allowCors();
+		$this->allowCors();
 
 		switch($_SERVER['REQUEST_METHOD']){
 			case "POST":
 				// start off with just this inside this braanch
 				$data = $this->getJSONRequestBody();
 
-				$user = new User($data);
+				$user = $da->convertRowToModel($data);
 				if($user->isValid()){
 					try{
 						$user = $da->insert($user);
@@ -102,7 +102,7 @@ class UserController extends Controller{
 				break;
 			case "PUT":
 				$data = $this->getJSONRequestBody();
-				$user = new User($data);
+				$user = $da->convertRowToModel($data);
 				if($user->isValid()){
 					try{
 						if($da->update($user)){
@@ -122,7 +122,14 @@ class UserController extends Controller{
 				}
 				break;
 			case "DELETE":
-				echo("DELETE USER $id");
+				if($user = $da->getById($id)){
+					$user->user_active = "no";
+					$da->update($user);
+					$this->sendHeader(200);
+				}else{
+					$this->sendHeader(400, msg: "Unable to delete user $id");
+				}
+				
 				break;
 			case "OPTIONS":
 				// AJAX CALLS WILL OFTEN SEND AN OPTIONS REQUEST BEFORE A PUT OR DELETE

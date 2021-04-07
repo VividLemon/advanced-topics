@@ -25,9 +25,9 @@ class EmployeeDepartmentDataAccess extends DataAccess{
 	    * @return {array}
 	    */
 	    function convertModelToRow($department){
-	    	$row['department_id'] = mysqli_real_escape_string($this->link, $department->id);
-			$row['department_name'] = mysqli_real_escape_string($this->link, $department->name);
-			$row['department_staff_count'] = mysqli_real_escape_string($this->link, $department->staff_count);
+	    	$row['id'] = mysqli_real_escape_string($this->link, $department->id);
+			$row['department_name'] = mysqli_real_escape_string($this->link, $department->department_name);
+			$row['department_staff_count'] = mysqli_real_escape_string($this->link, $department->department_staff_count);
 			$row['employee_id'] = mysqli_real_escape_string($this->link, $department->employee_id);
 			return $row;
 	    }
@@ -40,11 +40,14 @@ class EmployeeDepartmentDataAccess extends DataAccess{
 	    * @return {EmployeeDepartment}		Returns a subclass of a Model 
 	    */
 	    function convertRowToModel($row){
-	    	$department = new Department();
-			$department->id = htmlentities($row['department_id']);
-			$department->name = htmlentities($row['department_name']);
-			$department->staff_count = htmlentities($row['department_staff_count']);
+	    	$department = new Employee_department();
+			if(isset($row['id'])){
+				$department->id = htmlentities($row['id']);
+			}
+			$department->department_name = htmlentities($row['department_name']);
+			$department->department_staff_count = htmlentities($row['department_staff_count']);
 			$department->employee_id = htmlentities($row['employee_id']);
+			return $department;
 	    }
 
 
@@ -54,7 +57,7 @@ class EmployeeDepartmentDataAccess extends DataAccess{
 	    * @return {EmployeeDepartment}		Returns an instance of a model object 
 	    */
 	    function getById($id){
-			$qstr = "SELECT department_id, name, staff_count, employee_id FROM employee_department where department_id = " . mysqli_real_escape_string($this->link, $id);
+			$qstr = "SELECT department_id as id, department_name, department_staff_count, employee_id FROM employee_department where department_id = " . mysqli_real_escape_string($this->link, $id);
 			$result = mysqli_query($this->link, $qstr) or $this->handleError(mysqli_error($this->link));
 			if($result->num_rows == 1){
 				$row = mysqli_fetch_assoc($result);
@@ -73,7 +76,7 @@ class EmployeeDepartmentDataAccess extends DataAccess{
 	    * @return {array}		Returns an array of model objects
 	    */
 	    function getAll($args = []){
-			$qstr = "SELECT * FROM employee_department";
+			$qstr = "SELECT department_id as id, department_name, department_staff_count, employee_id FROM employee_department";
 			$result = mysqli_query($this->link, $qstr) or $this->handleError(mysqli_error($this->link));
 			$all = array();
 			while($row = mysqli_fetch_assoc($result)){
@@ -93,14 +96,15 @@ class EmployeeDepartmentDataAccess extends DataAccess{
 	    function insert($department){
 			$row = $this->convertModelToRow($department);
 			$qstr = "INSERT INTO employee_department (
-				name,
-				department_desc,
-				staff_count
+				department_name,
+				department_staff_count,
+				employee_id
 				) VALUES (
-					'{$row['name']}',
-					'{$row['department_desc']}',
-					'{$row['staff_count']}' 
+					'{$row['department_name']}',
+					'{$row['department_staff_count']}',
+					'{$row['employee_id']}' 
 				)";
+			$result = mysqli_query($this->link, $qstr) or $this->handleError(mysqli_error($this->link));
 				if($result){
 					$department->id = mysqli_insert_id($this->link);
 					return $department;
@@ -116,13 +120,13 @@ class EmployeeDepartmentDataAccess extends DataAccess{
 	    * @return {object}		Returns the same model object that was passed in as the param
 	    */
 	    function update($department){
-			$row = $this->convertModelToRow($user);
+			$row = $this->convertModelToRow($department);
 
 			$qStr = "UPDATE employee_department SET
 					department_name = '{$row['department_name']}',
 					department_staff_count = '{$row['department_staff_count']}',
 					employee_id = '{$row['employee_id']}'
-				WHERE department_id = " . $row['department_id'];
+				WHERE department_id = " . $row['id'];
 
 			$result = mysqli_query($this->link, $qStr) or $this->handleError(mysqli_error($this->link)); 
 

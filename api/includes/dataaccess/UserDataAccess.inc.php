@@ -47,14 +47,14 @@ class UserDataAccess extends DataAccess{
 	function convertModelToRow($user){
 
 		$row = [];
-		$row['user_id']	= mysqli_real_escape_string($this->link, $user->id);
-		$row['user_first_name'] = mysqli_real_escape_string($this->link, $user->firstName);
-		$row['user_last_name'] = mysqli_real_escape_string($this->link, $user->lastName);
-		$row['user_email'] = mysqli_real_escape_string($this->link, $user->email);
-		$row['user_role'] = mysqli_real_escape_string($this->link, $user->roleId);
-		$row['user_password'] = mysqli_real_escape_string($this->link, $user->password);
-		$row['user_salt'] = mysqli_real_escape_string($this->link, $user->salt);
-		$row['user_active'] = mysqli_real_escape_string($this->link, $user->active);
+		$row['id']	= mysqli_real_escape_string($this->link, $user->id);
+		$row['user_first_name'] = mysqli_real_escape_string($this->link, $user->user_first_name);
+		$row['user_last_name'] = mysqli_real_escape_string($this->link, $user->user_last_name);
+		$row['user_email'] = mysqli_real_escape_string($this->link, $user->user_email);
+		$row['user_role'] = mysqli_real_escape_string($this->link, $user->user_roleId);
+		$row['user_password'] = mysqli_real_escape_string($this->link, $user->user_password);
+		$row['user_salt'] = mysqli_real_escape_string($this->link, $user->user_salt);
+		$row['user_active'] = mysqli_real_escape_string($this->link, $user->user_active);
 
 		return $row;
 	}
@@ -71,14 +71,16 @@ class UserDataAccess extends DataAccess{
 		// then use $this->sanitizeHTML() instead of htmlentities()
 
 		$u = new User();
-		$u->id = htmlentities($row['user_id']);
-		$u->firstName = htmlentities($row['user_first_name']);
-		$u->lastName = htmlentities($row['user_last_name']);
-		$u->email = htmlentities($row['user_email']);
-		$u->roleId = htmlentities($row['user_role']);
-		$u->password = htmlentities($row['user_password']);
-		$u->salt = htmlentities($row['user_salt']);
-		$u->active = htmlentities($row['user_active']);
+		if(isset($row['id'])){
+			$u->id = htmlentities($row['id']);
+		}
+		$u->user_first_name = htmlentities($row['user_first_name']);
+		$u->user_last_name = htmlentities($row['user_last_name']);
+		$u->user_email = htmlentities($row['user_email']);
+		$u->user_roleId = htmlentities($row['user_role']);
+		$u->user_password = htmlentities($row['user_password']);
+		$u->user_salt = htmlentities($row['user_salt']);
+		$u->user_active = htmlentities($row['user_active']);
 
 		return $u;
 	}
@@ -94,7 +96,7 @@ class UserDataAccess extends DataAccess{
 		
 		// Write a SQL query to select the id, first name, last name, and email address of every user in the users table
 		$qStr = "SELECT
-		            user_id, user_first_name, user_last_name, user_email, user_password, user_salt, user_role, user_active
+		            user_id as id, user_first_name, user_last_name, user_email, user_password, user_salt, user_role, user_active
 		        FROM users";
 		    
 		//die($qStr);
@@ -120,7 +122,7 @@ class UserDataAccess extends DataAccess{
 	function getById($id){
 		
 		$qStr = "SELECT
-		            user_id, 
+		            user_id as id, 
 		            user_first_name, 
 		            user_last_name, 
 		            user_email, 
@@ -218,7 +220,7 @@ class UserDataAccess extends DataAccess{
 				user_salt = '{$row['user_salt']}', 
 				user_role = '{$row['user_role']}',  
 				user_active = '{$row['user_active']}'
-			WHERE user_id = " . $row['user_id'];
+			WHERE user_id = " . $row['id'];
        
 		//die($qStr);
 
