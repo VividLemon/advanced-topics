@@ -1,5 +1,6 @@
 <?php
 include_once("Model.inc.php");
+include_once("config.inc.php");
 
 class Role extends Model
 {
@@ -15,6 +16,7 @@ class Role extends Model
 		public int $id = 0,
 		public string $role_name = "",
 		public string $role_desc = "",
+		public string $active = "yes",
 	){
 		
 	}
@@ -43,19 +45,23 @@ class Role extends Model
 		if(empty($this->role_name)){
 			$valid = false;
 			$this->validationErrors['name'] = "Name is required";
-		}else if(strlen($this->role_name) > 30){
+		}else if(strlen($this->role_name) > NAME_LENGTH){
 			$valid = false;
-			$this->validationErrors['name'] = "Name must be less than 30 characters";
+			$this->validationErrors['name'] = "Name must be less than " . NAME_LENGTH . " characters";
 		}
 
 		if(empty($this->role_desc)){
 			$valid = false;
 			$this->validationErrors['description'] = "Description is required";
-		}else if(strlen($this->role_desc) > 200){
+		}else if(strlen($this->role_desc) > DESC_LENGTH){
 			$valid = false;
-			$this->validationErrors['description'] = "Description must be less than 200 characters";
+			$this->validationErrors['description'] = "Description must be less than " . DESC_LENGTH . " characters";
 		}
 
+		if($this->active != "yes" && $this->active != "no"){
+			$valid = false;
+			$this->validationErrors['active'] = "Active must be either 'yes' or 'no'";
+		}
 
 		return $valid;
 	}

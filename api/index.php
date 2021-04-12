@@ -1,5 +1,5 @@
 <?php
-//session_start(); // we'll use sessions to securing resources, although I'm not sure we should
+session_start(); // we'll use sessions to securing resources, although I'm not sure we should
 
 // We need to discuss URL rewriting before we do this
 
@@ -13,7 +13,6 @@ $url_path = $_GET['url_path'] ?? "";
 //die($url_path);
 
 if($url_path == ""){
-	phpinfo();
 	die("show the api documentation page");
 }
 
@@ -27,7 +26,11 @@ $routes = [
 	"departments/" => ["controller" => "EmployeeDepartmentController", "action" => "handle_employee_departments"],
 	"departments/:id" => ["controller" => "EmployeeDepartmentController", "action" => "handle_single_department"],
 	"products/" => ["controller" => "ProductController", "action" => "handle_products"],
-	"products/:id" => ["controller" => "ProductController", "action" => "handle_single_product"]
+	"products/:id" => ["controller" => "ProductController", "action" => "handle_single_product"],
+	"productTypes/" => ["controller" => "ProductTypeController", "action" => "handle_product_types"],
+	"productTypes/:id" => ["controller" => "ProductTypeController", "action" => "handle_single_product_type"],
+	"login" => ["controller" => "LoginController", "action" => "handleLogin"],
+	"logout" => ["controller" => "LoginController", "action" => "handleLogout"]
 ];
 
 $router = new Router($routes);
@@ -50,6 +53,5 @@ if($route = $router->getController($url_path)){
 	header('HTTP/1.1 400 Bad Request');
 }
 die();
-// TODO: plug all of your api calls into the $routes array
 
 ?>

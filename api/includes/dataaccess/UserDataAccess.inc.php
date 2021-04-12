@@ -97,7 +97,8 @@ class UserDataAccess extends DataAccess{
 		// Write a SQL query to select the id, first name, last name, and email address of every user in the users table
 		$qStr = "SELECT
 		            user_id as id, user_first_name, user_last_name, user_email, user_password, user_salt, user_role, user_active
-		        FROM users";
+		        FROM users 
+				WHERE user_active = 'yes'";
 		    
 		//die($qStr);
 
@@ -158,8 +159,8 @@ class UserDataAccess extends DataAccess{
         $row = $this->convertModelToRow($user);
         
         // We'll talk about salting and hashing passwords later
-        //$row['user_salt'] = $this->getRandomSalt();
-        //$row['user_password'] = $this->saltAndHashPassword($row['user_salt'], $row['user_password']);
+        $row['user_salt'] = $this->getRandomSalt();
+        $row['user_password'] = $this->saltAndHashPassword($row['user_salt'], $row['user_password']);
 
         $qStr = "INSERT INTO users (
                     user_first_name,
@@ -189,9 +190,10 @@ class UserDataAccess extends DataAccess{
             return $user;
         }else{
             $this->handleError("unable to insert user");
+			return false;
         }
 
-        return false;
+        
 	}
 
 	/**
@@ -199,9 +201,11 @@ class UserDataAccess extends DataAccess{
 	 * @param {User} $user
 	 * @param {boolean} $hashPassword 	If true, the Users password should be salted and 
 	 *									hashed before running the upate.
+	 * @param {boolean} $delete 		If true, will prepare for "deleting"
+	 * 									and will submit the correct handleError()
 	 * @return {boolean}				Returns true if the update succeeds			
 	 */
-	function update($user, $hashPassword = false){
+	function update($user, $hashPassword = false, $delete = false){
         
         $row = $this->convertModelToRow($user);
        
@@ -230,12 +234,22 @@ class UserDataAccess extends DataAccess{
 		$records = (int)$mysqli_test[2]; 
 		$changes = (int)$mysqli_test[4];
 
-		if($result && mysqli_affected_rows($this->link) == 1){
-			return true;
-		}else if($records == 1 && $changes == 0){
-			$this->handleError("Unable to update a user with no changes");
+		if($delete){
+			if($result && mysqli_affected_rows($this->link) == 1){
+				return true;
+			}else if($records == 1 && $changes == 0){
+				$this->handleError("User is already non-active");
+			}else{
+				$this->handleError("Unable to delete user");
+			}
 		}else{
-			$this->handleError("Unable to update user");
+			if($result && mysqli_affected_rows($this->link) == 1){
+				return true;
+			}else if($records == 1 && $changes == 0){
+				$this->handleError("Unable to update a user with no changes");
+			}else{
+				$this->handleError("Unable to update user");
+			}
 		}
 	}
 
@@ -256,47 +270,84 @@ class UserDataAccess extends DataAccess{
 	* Authenticates a user
 	* @param $email
 	* @param $password
-	* @return 			Returns an assoc array with the user details if they authenticate
+	* @return 			Returns a User model object if authentication is successful
 	* 					Returns false otherwise
 	*/
 	function login($email, $password){
 	
-		// We'll work on this later
-		// BUT REMINDER: the user should be 'active' in order to login
+		//REMINDER: the user should be 'active' in order to login
+	
+		// Prevent SQL injection 
+		$email = mysqli_real_escape_string($this->link, $email);
+		$password = mysqli_real_escape_string($this->link, $password);
+
+        	// Select all columns from the user table where user_email = $email AND user_active = "yes"
+		// Note that we aren't checking the password here, we'll do that next.
+		$qStr = "SELECT
+					user_id as id, 
+					user_first_name, 
+					user_last_name, 
+					user_email, 
+					user_role, 
+					user_salt, 
+					user_password, 
+					user_active
+				FROM users 
+				WHERE user_email = '{$email}' AND user_active='yes'";
+		
+		//die($qStr);
+		
+		$result = mysqli_query($this->link, $qStr) or $this->handleError(mysqli_error($this->link));
+		
+		if($result && $result->num_rows == 1){
+
+			$row = mysqli_fetch_assoc($result);
+            
+           		$salted_password = $this->saltPassword($row['user_salt'], $password);
+            
+            		// verify that the salted password matches the user's password in the database:
+            		if(password_verify($salted_password, $row['user_password'])){
+				$user = $this->convertRowToModel($row);
+				return $user;
+			}
+		}else{
+			$this->handleError("Invalid User Login");
+		}
+
+		return false;
+
 	}
 
-    // generates a random 'salt' string
+	
+	function saltPassword($salt, $password){
+		return $salt . $password . $salt;
+	}
+	
+
+    	// generates a random 'salt' string
 	function getRandomSalt(){
 
-		//FOR PHP7...
 		$bytes = random_bytes(5);
 		return bin2hex($bytes);
 
-        // FOR EARLIER VERSIONS OF PHP
-		//return mcrypt_create_iv(5);
 	}
+
+	
 
 	// Hash the password and mix in the salt
 	function saltAndHashPassword($salt, $password){
 
-		// This is the old way to do it (less secure)
-		//return md5($salt . $password . $salt);
+		$salted_password = $this->saltPassword($salt, $password);
+		$encrypted_password = password_hash($salted_password, PASSWORD_DEFAULT);
 
-		// there are better ways to encrypt passwords...
-		// https://www.php.net/manual/en/function.password-hash.php
+	
 
-		// NOTE THAT FOR THIS TO WORK WE NEED TO ALTER THE user_password column
-		// in the database to accomdate 255 characters!!!
-		
-		$encrypted_password = password_hash($salt . $password . $salt, PASSWORD_DEFAULT);
 		return $encrypted_password;
 
 		/*
 		ALSO NOTE: you can use password_verify() to check it
-		$password = "test123";
-		$encrypted = password_hash($salt . $password . $salt);
-		if(password_verify($salt . $password . $salt, $encrypted)){
-			
+		if(password_verify($salted_password, $encrypted_password)){
+			// THEY MATCH!!!
 		}
 		*/
 	}

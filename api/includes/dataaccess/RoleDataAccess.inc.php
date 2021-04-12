@@ -26,6 +26,7 @@ class RoleDataAccess extends DataAccess{
 	    	$row['id'] = mysqli_real_escape_string($this->link, $role->id);
 	    	$row['role_name'] = mysqli_real_escape_string($this->link, $role->role_name);
 	    	$row['role_desc'] = mysqli_real_escape_string($this->link, $role->role_desc);
+			$row['active'] = mysqli_real_escape_string($this->link, $role->active);
 			return $row;
 	    }
 
@@ -44,6 +45,9 @@ class RoleDataAccess extends DataAccess{
 			}
 			$role->role_name = htmlentities($row['role_name']);
 			$role->role_desc = htmlentities($row['role_desc']);
+			if(isset($row['active'])){
+				$role->active = htmlentities($row['active']);
+			}
 			return $role;
 	    }
 
@@ -52,9 +56,11 @@ class RoleDataAccess extends DataAccess{
 	    * Gets a row from the database by it's id
 	    * @param {number} $id 	The id of the item to get from a row in the database
 	    * @return {Role}		Returns an instance of a model object 
+		* Returns false if fails
 	    */
 	    function getById($id){
-			$qStr = "SELECT user_role_id as id, user_role_name as role_name, user_role_desc as role_desc FROM user_roles WHERE user_role_id = " . mysqli_real_escape_string($this->link, $id);
+			$qStr = "SELECT user_role_id as id, user_role_name as role_name, user_role_desc as role_desc, active FROM user_roles WHERE 
+			user_role_id = " . mysqli_real_escape_string($this->link, $id);
 			$result = mysqli_query($this->link, $qStr) or $this->handleError(mysqli_error($this->link));
 			if($result->num_rows == 1){
 				$row = mysqli_fetch_assoc($result);
@@ -73,7 +79,8 @@ class RoleDataAccess extends DataAccess{
 	    * @return {array}		Returns an array of model objects
 	    */
 	    function getAll($args = []){
-			$qStr = "SELECT user_role_id as id , user_role_name as role_name, user_role_desc as role_desc FROM user_roles ";
+			$qStr = "SELECT user_role_id as id , user_role_name as role_name, user_role_desc as role_desc, active FROM user_roles 
+			WHERE active = 'yes'";
 			// foreach($args as $value){
 			// 	$qStr .= trim($value); 
 			// 	$qStr .= " ";
@@ -93,15 +100,18 @@ class RoleDataAccess extends DataAccess{
 	    * @param {Role}	$role	The model object to be inserted
 	    * @return {Role}		Returns the same model object, but with the id property set 
 	    *						(the id is assigned by the database)
+		* Returns handleError() and false if fails
 	    */
 	    function insert($role){
 			$row = $this->convertModelToRow($role);
 			$qStr = "INSERT INTO user_roles (
 				user_role_name, 
-				user_role_desc
+				user_role_desc,
+				active
 				) VALUES (
 				'{$row['role_name']}',
-				'{$row['role_desc']}'
+				'{$row['role_desc']}',
+				'{$row['active']}'
 				)";
 
 			$result = mysqli_query($this->link, $qStr) or $this->handleError(mysqli_error($this->link));
@@ -117,13 +127,17 @@ class RoleDataAccess extends DataAccess{
 	    /**
 	    * Updates a row in a table of the database
 	    * @param {Role}	$role	The model object to be updated
-	    * @return {object}		Returns the same model object that was passed in as the param
+		* @param {boolean} $delete 		If true, will prepare for "deleting"
+	 	*								and will submit the correct handleError()
+	    * @return {boolean}		Returns true if the update succeeds		
+		* Returns handleError() and false if fails
 	    */
-	    function update($role){
+	    function update($role, $delete = false){
 			$row = $this->convertModelToRow($role);
 			$qstr = "UPDATE user_roles SET
 			user_role_name = '{$row['role_name']}',
-			user_role_desc = '{$row['role_desc']}'
+			user_role_desc = '{$row['role_desc']}',
+			active = '{$row['active']}'
 			WHERE user_role_id = " . $row['id'];
 
 			$result = mysqli_query($this->link, $qstr) or $this->handleError(mysqli_error($this->link));
@@ -132,12 +146,26 @@ class RoleDataAccess extends DataAccess{
 			$records = (int)$mysqli_test[2]; 
 			$changes = (int)$mysqli_test[4];
 
-			if($result && mysqli_affected_rows($this->link) == 1){
-				return true;
-			}else if($records == 1 && $changes == 0){
-				$this->handleError("Unable to update a role with no changes");
+			if($delete){
+				if($result && mysqli_affected_rows($this->link) == 1){
+					return true;
+				}else if($records == 1 && $changes == 0){
+					$this->handleError("Role is already non-active");
+					return false;
+				}else{
+					$this->handleError("Unable to delete role");
+					return false;
+				}
 			}else{
-				$this->handleError("Unable to update role");
+				if($result && mysqli_affected_rows($this->link) == 1){
+					return true;
+				}else if($records == 1 && $changes == 0){
+					$this->handleError("Unable to update a role with no changes");
+					return false;
+				}else{
+					$this->handleError("Unable to update role");
+					return false;
+				}
 			}
 	    }
 

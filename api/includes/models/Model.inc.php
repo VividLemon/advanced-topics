@@ -2,6 +2,8 @@
 
 abstract class Model {
 
+	
+
 	/**
 	* validationErrors will be populated when isValid() is called.
 	* It should include a key for any property of the model that is not valid

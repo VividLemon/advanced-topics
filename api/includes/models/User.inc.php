@@ -1,5 +1,6 @@
 <?php
 include_once("Model.inc.php");
+include_once("config.inc.php");
 
 class User extends Model
 {
@@ -52,18 +53,18 @@ class User extends Model
 		if (empty($this->user_first_name)) {
 			$valid = false;
 			$this->validationErrors['user_first_name'] = "First Name is required";
-		}else if(strlen($this->user_first_name) > 30){
+		}else if(strlen($this->user_first_name) > NAME_LENGTH){
 			$valid = false;
-			$this->validationErrors['user_first_name'] = "First Name must be 30 characters or less";
+			$this->validationErrors['user_first_name'] = "First Name must be less than " . NAME_LENGTH ." characters";
 		}
 
 		// validate lastName
 		if (empty($this->user_last_name)) {
 			$valid = false;
 			$this->validationErrors['user_last_name'] = "Last Name is required";
-		}else if(strlen($this->user_last_name) > 30){
+		}else if(strlen($this->user_last_name) > NAME_LENGTH){
 			$valid = false;
-			$this->validationErrors['user_last_name'] = "Last Name must be 30 characters or less";
+			$this->validationErrors['user_last_name'] = "Last Name must be less than " . NAME_LENGTH . " characters";
 		}
 
 		// validate email
@@ -75,7 +76,7 @@ class User extends Model
 			$this->validationErrors['user_email'] = "The email address is not valid";
 		}else if(strlen($this->user_email) > 255){
 			$valid = false;
-			$this->validationErrors['user_email'] = "The email address must not be more than 255 characters";
+			$this->validationErrors['user_email'] = "The email address must be less than 255 characters";
 		}
 
 		// role id should be a number greater than zero
@@ -95,9 +96,9 @@ class User extends Model
 		// salt does not need validation
 
 		// active must be either 'yes' or 'no'
-		if ($this->user_active != "yes" && $this->active != "no") {
+		if ($this->user_active != "yes" && $this->user_active != "no") {
 			$valid = false;
-			$this->validationErrors['user_active'] = "Active setting is not valid";
+			$this->validationErrors['user_active'] = "Active must be either 'yes' or 'no'";
 		}
 
 		return $valid;

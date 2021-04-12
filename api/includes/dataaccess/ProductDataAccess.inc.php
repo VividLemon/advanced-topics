@@ -6,7 +6,7 @@ require_once("DataAccess.inc.php");
 include_once(__DIR__ . "/../models/product.inc.php"); // I had problems including this file, not sure why!
 
 
-class productDataAccess extends DataAccess{
+class ProductDataAccess extends DataAccess{
 
 	    /**
 	    * Constructor function for this class
@@ -30,6 +30,7 @@ class productDataAccess extends DataAccess{
 	    	$row['product_desc'] = mysqli_real_escape_string($this->link, $product->product_desc);
 	    	$row['product_price'] = mysqli_real_escape_string($this->link, $product->product_price);
 			$row['type_id'] = mysqli_real_escape_string($this->link, $product->type_id);
+			$row['active'] = mysqli_real_escape_string($this->link, $product->active);
 			return $row;
 	    }
 
@@ -49,6 +50,9 @@ class productDataAccess extends DataAccess{
             $product->product_desc = htmlentities($row['product_desc']);
             $product->product_price = htmlentities($row['product_price']);
 			$product->type_id = htmlentities($row['type_id']);
+			if(isset($row['active'])){
+				$product->active = htmlentities($row['active']);
+			}
             return $product;
 	    }
 
@@ -59,7 +63,8 @@ class productDataAccess extends DataAccess{
 	    * @return {product}		Returns an instance of a model object 
 	    */
 	    function getById($id){
-            $qstr = "SELECT product_id as id, product_name, product_desc, product_price, type_id FROM products WHERE product_id = " . mysqli_real_escape_string($this->link, $id);
+            $qstr = "SELECT product_id as id, product_name, product_desc, product_price, type_id FROM products WHERE 
+			product_id = " . mysqli_real_escape_string($this->link, $id);
             $result = mysqli_query($this->link, $qstr) or $this->handleError(mysqli_error($this->link));
             if($result->num_rows == 1){
                 $row = mysqli_fetch_assoc($result);
@@ -78,7 +83,8 @@ class productDataAccess extends DataAccess{
 	    * @return {array}		Returns an array of model objects
 	    */
 	    function getAll($args = []){
-            $qstr = "SELECT product_id as id, product_name, product_desc, product_price, type_id FROM products";
+            $qstr = "SELECT product_id as id, product_name, product_desc, product_price, type_id FROM products
+			WHERE active = 'yes'";
             $result = mysqli_query($this->link, $qstr) or $this->handleError(mysqli_error($this->link));
 			$all = array();
             while($row = mysqli_fetch_assoc($result)){
@@ -101,12 +107,14 @@ class productDataAccess extends DataAccess{
 				product_name, 
 				product_desc,
                 product_price,
-				type_id
+				type_id,
+				active
 				) VALUES (
 				'{$row['product_name']}',
 				'{$row['product_desc']}',
                 '{$row['product_price']}',
-				'{$row['type_id']}'
+				'{$row['type_id']}',
+				'{$row['active']}'
 				)";
 
 			$result = mysqli_query($this->link, $qStr) or $this->handleError(mysqli_error($this->link));
@@ -122,16 +130,19 @@ class productDataAccess extends DataAccess{
 	    /**
 	    * Updates a row in a table of the database
 	    * @param {product}	$product	The model object to be updated
-	    * @return {object}		Returns the same model object that was passed in as the param
+		* @param {boolean} $delete 		If true, will prepare for "deleting"
+		*								and will submit the correct handleError()
+	    * @return {boolean}				Returns true if the update succeeds	
 	    */
-	    function update($product){
+	    function update($product, $delete = false){
             $row = $this->convertModelToRow($product);
 
 			$qStr = "UPDATE products SET
 					product_name = '{$row['product_name']}',
 					product_desc = '{$row['product_desc']}',
 					product_price = '{$row['product_price']}',
-					type_id = '{$row['type_id']}'
+					type_id = '{$row['type_id']}',
+					active = '{$row['active']}'
 				WHERE product_id = " . $row['id'];
 
 			$result = mysqli_query($this->link, $qStr) or $this->handleError(mysqli_error($this->link)); 
@@ -140,12 +151,26 @@ class productDataAccess extends DataAccess{
 			$records = (int)$mysqli_test[2]; 
 			$changes = (int)$mysqli_test[4];
 
-			if($result && mysqli_affected_rows($this->link) == 1){
-				return true;
-			}else if($records == 1 && $changes == 0){
-				$this->handleError("Unable to update a product with no changes");
+			if($delete){
+				if($result && mysqli_affected_rows($this->link) == 1){
+					return true;
+				}else if($records == 1 && $changes == 0){
+					$this->handleError("Product is already non-active");
+					return false;
+				}else{
+					$this->handleError("Unable to delete product");
+					return false;
+				}
 			}else{
-				$this->handleError("Unable to update product");
+				if($result && mysqli_affected_rows($this->link) == 1){
+					return true;
+				}else if($records == 1 && $changes == 0){
+					$this->handleError("Unable to update a product with no changes");
+					return false;
+				}else{
+					$this->handleError("Unable to update product");
+					return false;
+				}
 			}
 	    }
 

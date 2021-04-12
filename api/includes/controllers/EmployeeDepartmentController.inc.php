@@ -110,8 +110,18 @@ class EmployeeDepartmentController extends Controller{
 				}
 				break;
 			case "DELETE":
-				echo("DELETE employee_department $id");
-				break;
+				if($employee_department = $da->getById($id)){
+					try{
+						$employee_department->active = "no";
+						$da->update($employee_department, true);
+						$this->sendHeader(200);
+					}catch(Exception $e){
+						$this->sendHeader(400, true, $e->getMessage());
+					}
+					die();
+				}else{
+					$this->sendHeader(400, msg: "Unable to delete department, id: $id");
+				}
 			case "OPTIONS":
 				// AJAX CALLS WILL OFTEN SEND AN OPTIONS REQUEST BEFORE A PUT OR DELETE
 				// TO SEE IF THE PUT/DELETE WILL BE ALLOWED

@@ -28,7 +28,7 @@
             const user = {
                 user_first_name: "bill",
                 user_last_name: "Smith",
-                user_email: "bill@bifffll.com",
+                user_email: "bill@fffasdfsdfffll.com",
                 user_role: 1,
                 user_password: "test",
                 user_salt: "",
@@ -45,7 +45,7 @@
                 id: 1,
                 user_first_name: "Bill",
                 user_last_name: "Joe",
-                user_email: "Bil@ffaasffsldoe.com",
+                user_email: "Bil@ffaasfffffsldoe.com",
                 user_role: 1,
                 user_password: "test",
                 user_salt: "",
@@ -85,6 +85,7 @@
                 product_desc: "desccription",
                 product_price: 11,
                 type_id: 1,
+                active: "yes"
             };
 
             ax.post("products/", product)
@@ -98,11 +99,17 @@
                 product_name: "producttttt",
                 product_desc: "desccription",
                 product_price: 11,
-                type_id: 1
+                type_id: 1,
+                active: "yes"
             };
             ax.put(`products/${product.id}`, product)
                 .then(resp => console.log(resp))
                 .catch(err => console.log(err));
+        });
+
+        document.getElementById("btnDeleteProduct").addEventListener("click", () => {
+            const departmentId = 1;
+            ax.delete(`products/${departmentId}`).then(resp => console.log(resp)).catch(err => console.log(err));
         });
 
         // departments
@@ -127,7 +134,8 @@
             const department = {
                 department_name: "spooooooon",
                 department_staff_count: 2,
-                employee_id: 1
+                employee_id: 1,
+                active: "yes"
             };
 
             ax.post("departments/", department)
@@ -140,11 +148,16 @@
                 id: 1,
                 department_name: "Bilzasdfl",
                 department_staff_count: 222,
-                employee_id: 2
+                employee_id: 2,
+                active: "yes"
             };
             ax.put(`departments/${department.id}`, department)
                 .then(resp => console.log(resp))
                 .catch(err => console.log(err));
+        });
+        document.getElementById("btnDeleteDepartment").addEventListener("click", () => {
+            const departmentId = 1;
+            ax.delete(`departments/${departmentId}`).then(resp => console.log(resp)).catch(err => console.log(err));
         });
 
         // employees
@@ -171,7 +184,8 @@
                 user_id: 4,
                 employee_dob: "2001-01-01",
                 employee_salary: 22,
-                employee_part_time: "yes"
+                employee_part_time: "yes",
+                active: "yes"
             };
 
             ax.post("employees/", Employee)
@@ -185,11 +199,16 @@
                 user_id: 1,
                 employee_dob: "2001-01-01",
                 employee_salary: 22,
-                employee_part_time: "yes"
+                employee_part_time: "yes",
+                active: "yes"
             };
             ax.put(`employees/${Employee.id}`, Employee)
                 .then(resp => console.log(resp))
                 .catch(err => console.log(err));
+        });
+        document.getElementById("btnDeleteEmployee").addEventListener("click", () => {
+            const employeeId = 1;
+            ax.delete(`employees/${employeeId}`).then(resp => console.log(resp)).catch(err => console.log(err));
         });
 
     // Roles
@@ -213,7 +232,8 @@
 
         const Role = {
             role_name: "bbbbbbxxxxxx",
-            role_desc: "bbbbbbbeeeeee"
+            role_desc: "bbbbbbbeeeeee",
+            active: "yes"
         };
 
         ax.post("roles/", Role)
@@ -225,11 +245,64 @@
         const Role = {
             id: 1,
             role_name: "flaje",
-            role_desc: "beeeeeeeflkj"
+            role_desc: "beeeeeeeflkj",
+            active: "yes"
         };
         ax.put(`roles/${Role.id}`, Role)
             .then(resp => console.log(resp))
             .catch(err => console.log(err));
+    });
+
+    document.getElementById("btnDeleteRole").addEventListener("click", () => {
+        const roleId = 1;
+        ax.delete(`roles/${roleId}`).then(resp => console.log(resp)).catch(err => console.log(err));
+    });
+
+    //Product Types
+    document.getElementById("btnGetAllProductTypes").addEventListener("click", () => {
+        ax.get("productTypes/")
+            .then(response => {
+                console.log(response);
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    });
+
+    document.getElementById("btnGetProductTypeById").addEventListener("click", () => {
+        ax.get("productTypes/1")
+            .then(response => console.log(response.data))
+            .catch(err => console.log(err));
+    });
+
+    document.getElementById("btnPostProductType").addEventListener("click", () => {
+
+        const productType = {
+            product_type_name: "bbbbbbxxxxxx",
+            product_type_desc: "bbbbbbbeeeeee",
+            active: "yes"
+        };
+
+        ax.post("productTypes/", productType)
+            .then(response => console.log(response))
+            .catch(error => console.log(error));
+    });
+
+    document.getElementById("btnPutProductType").addEventListener("click", () => {
+        const productType = {
+            id: 1,
+            product_type_name: "flaje",
+            product_type_desc: "beeeeeeeflkj",
+            active: "yes"
+        };
+        ax.put(`productTypes/${productType.id}`, productType)
+            .then(resp => console.log(resp))
+            .catch(err => console.log(err));
+    });
+
+    document.getElementById("btnDeleteProductType").addEventListener("click", () => {
+        const productTypeId = 1;
+        ax.delete(`productTypes/${productTypeId}`).then(resp => console.log(resp)).catch(err => console.log(err));
     });
 
 });

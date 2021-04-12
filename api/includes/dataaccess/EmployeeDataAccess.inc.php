@@ -4,7 +4,7 @@ require_once("DataAccess.inc.php");
 include_once(__DIR__ . "/../models/Employee.inc.php"); // I had problems including this file, not sure why!
 
 
-class employeeDataAccess extends DataAccess{
+class EmployeeDataAccess extends DataAccess{
 
 	    /**
 	    * Constructor function for this class
@@ -28,7 +28,7 @@ class employeeDataAccess extends DataAccess{
 	    	$row['employee_dob'] = mysqli_real_escape_string($this->link, $employee->employee_dob);
             $row['employee_salary'] = mysqli_real_escape_string($this->link, $employee->employee_salary);
 	    	$row['employee_part_time'] = mysqli_real_escape_string($this->link, $employee->employee_part_time);
-
+			$row['active'] = mysqli_real_escape_string($this->link, $employee->active);
 			return $row;
 	    }
 
@@ -49,6 +49,9 @@ class employeeDataAccess extends DataAccess{
 			$employee->employee_dob = htmlentities($row['employee_dob']);
             $employee->employee_salary = htmlentities($row['employee_salary']);
             $employee->employee_part_time = htmlentities($row['employee_part_time']);
+			if(isset($row['active'])){
+				$employee->active = htmlentities($row['active']);
+			}
 			return $employee;
 	    }
 
@@ -59,7 +62,8 @@ class employeeDataAccess extends DataAccess{
 	    * @return {employee}		Returns an instance of a model object 
 	    */
 	    function getById($id){
-			$qStr = "SELECT employee_id as id, user_id, employee_dob, employee_salary, employee_part_time FROM employees WHERE employee_id = " . mysqli_real_escape_string($this->link, $id);
+			$qStr = "SELECT employee_id as id, user_id, employee_dob, employee_salary, employee_part_time FROM employees WHERE
+			employee_id = " . mysqli_real_escape_string($this->link, $id);
 			$result = mysqli_query($this->link, $qStr) or $this->handleError(mysqli_error($this->link));
 			if($result->num_rows == 1){
 				$row = mysqli_fetch_assoc($result);
@@ -78,7 +82,8 @@ class employeeDataAccess extends DataAccess{
 	    * @return {array}		Returns an array of model objects
 	    */
 	    function getAll($args = []){
-			$qStr = "SELECT employee_id as id, user_id, employee_dob, employee_salary, employee_part_time FROM employees ";
+			$qStr = "SELECT employee_id as id, user_id, employee_dob, employee_salary, employee_part_time FROM employees
+			WHERE active = 'yes'";
 			// foreach($args as $value){
 			// 	$qStr .= trim($value); 
 			// 	$qStr .= " ";
@@ -106,12 +111,14 @@ class employeeDataAccess extends DataAccess{
 				user_id, 
 				employee_dob,
                 employee_salary,
-                employee_part_time
+                employee_part_time,
+				active
 				) VALUES (
 				'{$row['user_id']}',
                 '{$row['employee_dob']}',
 				'{$row['employee_salary']}',
-				'{$row['employee_part_time']}'
+				'{$row['employee_part_time']}',
+				'{$row['active']}'
 				)";
 
 			$result = mysqli_query($this->link, $qStr) or $this->handleError(mysqli_error($this->link));
@@ -127,16 +134,17 @@ class employeeDataAccess extends DataAccess{
 	    /**
 	    * Updates a row in a table of the database
 	    * @param {employee}	$employee	The model object to be updated
-	    * @return {object}		Returns the same model object that was passed in as the param
+	    * @return {boolean}				Returns true if the update succeeds	
 	    */
-	    function update($employee){
+	    function update($employee, $delete = false){
 			$row = $this->convertModelToRow($employee);
 
 			$qStr = "UPDATE employees SET
 					user_id = '{$row['user_id']}',
 					employee_dob = '{$row['employee_dob']}',
 					employee_salary = '{$row['employee_salary']}',
-					employee_part_time = '{$row['employee_part_time']}'
+					employee_part_time = '{$row['employee_part_time']}',
+					active = '{$row['active']}'
 				WHERE employee_id = " . $row['id'];
 
 			$result = mysqli_query($this->link, $qStr) or $this->handleError(mysqli_error($this->link)); 
@@ -145,12 +153,26 @@ class employeeDataAccess extends DataAccess{
 			$records = (int)$mysqli_test[2]; 
 			$changes = (int)$mysqli_test[4];
 
-			if($result && mysqli_affected_rows($this->link) == 1){
-				return true;
-			}else if($records == 1 && $changes == 0){
-				$this->handleError("Unable to update an employee with no changes");
+			if($delete){
+				if($result && mysqli_affected_rows($this->link) == 1){
+					return true;
+				}else if($records == 1 && $changes == 0){
+					$this->handleError("Employee is already non-active");
+					return true;
+				}else{
+					$this->handleError("Unable to delete employee");
+					return true;
+				}
 			}else{
-				$this->handleError("Unable to update employee");
+				if($result && mysqli_affected_rows($this->link) == 1){
+					return true;
+				}else if($records == 1 && $changes == 0){
+					$this->handleError("Unable to update an employee with no changes");
+					return true;
+				}else{
+					$this->handleError("Unable to update employee");
+					return true;
+				}
 			}
 	    }
 
@@ -163,6 +185,6 @@ class employeeDataAccess extends DataAccess{
 	    function delete($id){
 	    	// should we really delete a row?
 	    	// it can get super tricky when there are foreign keys!
-            #TODO YES
+            
 	    }
 }

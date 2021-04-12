@@ -44,6 +44,8 @@ if(DEBUG_MODE){
 // the $link variable will be our connection to the database
 $link = null;
 
+
+
 function get_link(){
 
 	global $link;

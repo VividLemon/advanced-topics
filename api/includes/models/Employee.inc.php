@@ -1,5 +1,6 @@
 <?php
 include_once("Model.inc.php");
+include_once("config.inc.php");
 
 class Employee extends Model
 {
@@ -18,9 +19,9 @@ class Employee extends Model
 		public string $employee_dob = "",
 		public int $employee_salary = 0,
 		public string $employee_part_time = "no",
-
+		public string $active = "yes",
 	){
-		assert($employee_part_time == "yes" || $employee_part_time == "no");
+
 	}
 
 
@@ -44,19 +45,35 @@ class Employee extends Model
 			$valid = false;
 			$this->validationErrors['id'] = "The id is not valid";
 		}
-        if(!isset($this->user_id) || !($this->user_id >= 0)){
-            $valid = false;
-            $this->validationErrors['user_id'] = "The user id is not valid.";
-        }
-        if(!($this->employee_salary >= 0)){
-            $valid = false;
-            $this->validationErrors['emp_salary'] = "The salary must be a valid number";
-        }
-		if(!($this->employee_part_time == "yes" || $this->employee_part_time == "no")){
+
+		if(!($this->user_id >= 0)){
 			$valid = false;
-			$this->validationErrors['employee_part_time'] = "Employee part time must be yes or no";
+			$this->validationErrors['user_id'] = "The user id is not valid";
 		}
-#TODO add more?
+
+		if(empty($this->employee_dob)){
+			$valid = false;
+			$this->validationErrors['dob'] = "Date of birth is required";
+		}
+
+		if(empty($this->employee_salary)){
+			$valid = false;
+			$this->validationErrors['salary'] = "Salary is required";
+		}else if($this->employee_salary < 0){
+			$valid = false;
+			$this->validationErrors['salary'] = "Employee salary must be greater than 0";
+		}
+
+		if($this->employee_part_time != "yes" && $this->employee_part_time != "no"){
+			$valid = false;
+			$this->validationErrors['part_time'] = "Part time must be 'yes' or 'no'";
+		}
+
+		if($this->active != "yes" && $this->active != "no"){
+			$valid = false;
+			$this->validationErrors['active'] = "Active must be either 'yes' or 'no'";
+		}
+
 		return $valid;
 		// validate the rest of the instance vars
 	}
