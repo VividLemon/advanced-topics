@@ -8,7 +8,10 @@ Vue.config.productionTip = false
 new Vue({
   data(){
     return{
-        userRoles:[]
+        userRoles:[],
+        currentUser:"",
+        currentUserRoleId:0,
+        currentUserId:0
     }
   },
   mounted(){

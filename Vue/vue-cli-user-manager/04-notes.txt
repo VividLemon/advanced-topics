@@ -1,0 +1,381 @@
+We'll start by decomposing the nav bar in App.vue so that you can see what happens when your component hierarchy
+branches (the nav bar is on a different branch than the Users component)
+
+Create a NavBar.vue component and put this in it:
+
+    <template>
+        <div id="nav">
+            <router-link to="/">Home</router-link> |
+            <router-link to="/about">About</router-link> |
+            <router-link :to="{name: 'Users'}">Users</router-link>
+        </div>
+    </template>
+
+    <script>
+    export default {
+
+    }
+    </script>
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Now, update App.vue to look like this (it just uses the NavBar component):
+
+    <template>
+        <div id="app">
+            <nav-bar />
+            <router-view/>
+        </div>
+    </template>
+
+    <script>
+    import NavBar from './components/NavBar.vue'
+
+    export default {
+        components: { NavBar },
+    }
+    </script>
+
+    <style lang="scss">
+        @import './assets/main.scss';
+    </style>
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+Now we'll create a login vue, but first, add this method to the UserDataAccess object (api.js):
+
+    login(email, password){
+        return ax.post("login/", {email,password});//.catch((error) => errorHandler("Error logging in" + error));
+    }
+
+
+Create a Login.vue in the views folder:
+
+    <template>
+        <div class="login">
+            <form @submit.prevent="onSubmit">
+                <span class="validation">{{errors.login}}</span>
+                <!-- I'm not sure why the errors.login isn't showing up!!! -->
+                <div>
+                    <label>Email:</label>
+                    <input v-model="email" />
+                    <span class="validation" v-if="errors.email">{{errors.email}}</span>
+                </div>
+                <div>
+                    <label>Password:</label>
+                    <input type="password" v-model="password" />
+                    <span class="validation" v-if="errors.password">{{errors.password}}</span>
+                </div>
+                <div>
+                    <input type="submit" id="btnSubmit" name="submit button">
+                </div>
+            </form>
+        </div>
+    </template>
+
+    <script>
+    import {UserDataAccess as da} from "@/api"
+    export default {
+        data(){
+            return {
+                email: "",
+                password: "",
+                // errors: {}
+                errors: {email:"", password:"", login:""}
+            }
+        },
+        methods: {
+            onSubmit(){
+                if(this.validate()){
+                    da.login(this.email, this.password)
+                        .then((resp) => {
+                            console.log("Logged in!", resp.data);
+                        })
+                        .catch((error) => {
+                            alert("Unable to authenticate"); // this is LAME!!!
+                            // this.errors.login = error; // why is this not reactive???
+                            // this.$set(this.errors, "login", error); // this doesn't work either
+                        });
+                }
+            },
+            validate(){
+                
+                var isValid = true;
+                this.errors = {};
+
+                if(this.email == ""){
+                    this.errors.email = "Enter your login email";
+                    isValid = false;
+                }
+
+                if(this.password == ""){
+                    this.errors.password = "Enter your password";
+                    isValid = false;
+                }
+
+                return isValid;
+            }
+        }
+    }
+    </script>
+
+    <style scoped lang="scss">
+        label, .validation{ display: block; }
+        .validation{color: red; }
+    </style>
+
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Note that when the form is submitted, if the validation passes, then we call the login method that we added to the api in the previous step.
+
+Note: I was having problems getting the login error to show up on a failed login attempt.
+So I had to resort to showing and alert() - LAME!
+
+
+
+Add a route to the Login component (in router/index.js)
+DON'T FORGET TO IMPORT THE Login COMPONENT
+
+     {
+        path: '/login',
+        name: 'Login',
+        component: Login
+    }
+
+
+Add a router-link to the login component (NavBar.vue)
+
+    <router-link :to="{name: 'Login'}">Login</router-link>
+
+
+Run the app and try out the login.
+
+
+In main.js, update the data() method to look like this (we've added members to keep track of the current user):
+
+    data(){
+        return{
+            userRoles:[],
+            currentUser:"",
+            currentUserRoleId:0,
+            currentUserId:0
+        }
+    }
+
+
+In Login.vue, when a user successfully logs in, add this code:
+
+    this.$root.currentUser = resp.data.email;
+    this.$root.currentUserRoleId = resp.data.roleId;
+    this.$root.currentUserId = resp.data.id;
+    this.$router.push({name: "Home"});
+
+
+Note that the last line of code redirects to the Home view when a user logs in (we may change this later)
+
+
+Also in the Login.vue, add this mounted method (logs out a user when they go to this page)
+(Note that it should probably kill the session on the server too!)
+
+    mounted(){
+        // When a user comes to this page, log them out (because that are about to login)
+        this.$root.currentUser = "";
+        this.$root.currentUserRoleId = 0;
+        this.$root.currentUserId = 0;
+    },
+
+
+Run the app and watch the <Root> data in the Vue Chrome plugin
+
+
+Add this to the mounted() method in Users.vue (before it fetches the users):
+
+    if(this.$root.currentUserRoleId != 2){
+      // You muse be an admin (role id 2) to view this page
+      this.$router.push({name: "Login"});
+    }
+
+Note that we are using this.$router.push() to programatically redirect to the Login view if the current user is not an admin
+(I don't like that we are using a 'magic number' in this code, but at least I commented it)
+
+Login as an admin and you should be able to get to the Users vue
+Login as a standard user and you shouldn't be able to see the Users
+
+Update the NavBar component to look like this:
+    
+    <template>
+        <div id="nav">
+            <router-link to="/">Home</router-link> |
+            <router-link to="/about">About</router-link> |
+            <span v-if="$root.currentUser">
+                <router-link v-if="$root.currentUserRoleId == 2" :to="{name: 'Users'}">Users</router-link> |
+                <a href="#" @click="logout">Log Out</a> |
+            </span>
+            <span v-else>
+                <router-link :to="{name: 'Login'}">Login</router-link>
+            </span>
+        </div>
+    </template>
+
+    <script>
+    export default {
+        methods:{
+            logout(){
+                this.$router.push({name:"Login"});
+            }
+        }
+    }
+    </script>
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Note how the v-if and v-else directives show different links depending on whether or not a user is logged in.
+Also note that the log out link is not a router link, but clicking on it triggers the logout() method.
+
+
+
+
+Now we'll create a view to allow the current user to update their account settings.
+
+Add this method to the UserDataAccess object in the api.js file:
+
+    getUserById(id){
+        return ax.get("users/" + id).catch((error) => errorHandler("Error getting user by id:" + error));
+    }
+
+
+Create and Account.vue in the views folder:
+
+    <template>
+        <div>
+            <user-form :user="user" @user-updated="handleUpdate" @user-form-cancelled="handleCancel" :key="user.id" />
+        </div>
+    </template>
+
+    <script>
+    import UserForm from "../components/UserForm.vue"
+    import {UserDataAccess as da} from "@/api"
+
+    export default {
+        components: { UserForm },
+        data(){
+            return {
+                user:{}
+            }
+        },
+        mounted(){
+            if(this.$root.currentUserId){
+                da.getUserById(this.$root.currentUserId).then(resp => this.user = resp.data );
+            }else{
+                this.$router.push({name:"Login"});
+            }
+        },
+        methods:{
+            handleUpdate(user){
+                da.updateUser(user).then(resp => this.$router.push({name:"Home"}));
+            },
+            handleCancel(){
+                this.$router.push({name:"Home"});
+            }
+        }
+    }
+    </script>
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Note that we are re-using the UserForm component.
+And that we added a :key attr to the user-form element.
+We did this because when the component first loads creates the UserForm and sets it's user prop to an empty object.
+Later (after the ajax call completes), we populate the user data member and we want to force the UserForm to re-render.
+You can force a component to re-render by changing it's key attr.
+More info:   https://michaelnthiessen.com/force-re-render/
+
+
+
+Create a route to the Account view in router/index.js 
+(DON'T FORGET TO IMPORT THE Account COMPONENT)
+
+    {
+        path: '/account',
+        name: 'Account',
+        component: Account
+    }
+
+
+
+Add the router-link to the Account view (in the NavBar)
+Put it right before the 'Log Out' router-link:
+
+    <router-link :to="{name: 'Account'}">Your Account</router-link> |
+
+
+
+Here's the validate() method to add to the UserForm:
+
+    validate() {
+
+        // clear our any error messages from the previous submit
+        this.errors = {};
+
+        if (!this.firstName) {
+            this.errors.firstName = "First name is required";
+        }
+
+        if (!this.lastName) {
+            this.errors.lastName = "Last name is required";
+        }
+
+        const emailRegExp = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        if (!this.email) {
+            this.errors.email = "Email is required";
+        }else if(emailRegExp.test(this.email) == false){
+            this.errors.email = "The email address is not valid";
+        }
+
+        if (!this.password) {
+            this.errors.password = "Password is required";
+        }
+
+        // if there are no keys in the errors object, then everything is valid
+        return Object.keys(this.errors).length == 0;
+    }
+
+Finally, update the onSubmit method in the UserForm to look like this:
+
+    onSubmit() {
+            
+        if(this.validate()){
+        
+            const updatedUser = {
+                id: this.id,
+                firstName: this.firstName,
+                lastName: this.lastName,
+                email: this.email,
+                roleId: this.roleId,
+                password: this.password,
+                active: this.active
+            };
+
+            this.$emit("user-updated", updatedUser);
+        }
+    }
+
+BUT WE HAVE A PROBLEM...
+If the user password is changed, then we want to salt and hash it on the server.
+But if it does not change, then we want to make sure that the server does not salt and hash it
+(because it's already been salted and hashed)
+
+
+
+
+
+
+
+
+
+
+
+
+

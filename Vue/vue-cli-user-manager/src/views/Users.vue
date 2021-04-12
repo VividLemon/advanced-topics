@@ -33,6 +33,10 @@ export default {
         }
     },
     mounted(){
+        if(this.$root.currentUserRoleId != 2){
+            // You muse be an admin (role id 2) to view this page
+            this.$router.push({name: "Login"});
+        }
         da.getAllUsers()
         .then(response => {
             console.log(response.data);
