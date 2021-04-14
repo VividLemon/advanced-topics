@@ -13,6 +13,8 @@
                     :user="selectedUser" 
                     @user-form-cancelled="selectedUser = null"
                     @user-updated="handleUserUpdated" />
+                    <!-- TODO when a component emits an event,  -->
+                    <!-- You handle it with the above code -->
             </div>
         </div>  
 </template>
@@ -22,7 +24,6 @@
     import {UserDataAccess as da} from "@/api"
     import UserList from '../components/UserList.vue'
     import UserForm from '../components/UserForm.vue'
-   
 
 export default {
     components: { UserList, UserForm },

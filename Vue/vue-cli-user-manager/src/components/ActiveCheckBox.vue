@@ -1,6 +1,6 @@
 <template>
  <label>
-            <input type="checkbox" :checked="user.active == 'yes' ? true : false" @change="handleChange" />
+            <input type="checkbox" :checked="user.user_active == 'yes' ? true : false" @change="handleChange" />
             Active
         </label>
 </template>

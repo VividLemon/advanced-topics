@@ -1,7 +1,7 @@
 <template>
         <select @change="handleChange">
-            <option v-for="r in roles" :key="r.id" :value="r.id" :selected="r.id == user.roleId">
-                {{ r.name }}
+            <option v-for="r in roles" :key="r.id" :value="r.id" :selected="r.id == user.user_roleId">
+                {{ r.role_name }}
             </option>
         </select>
 </template>

@@ -50,28 +50,32 @@
         data() {
             return {
                 id: this.user?.id ?? 0,
-                firstName: this.user?.firstName ?? "",
-                lastName: this.user?.lastName ?? "",
-                email: this.user?.email ?? "",
-                roleId:  this.user?.roleId ?? 1, // Default to Standard User - this smells!
-                password: this.user?.password ?? "",
-                active:  this.user?.active ?? "yes", // new users will default to 'active'
+                firstName: this.user?.user_first_name ?? "",
+                lastName: this.user?.user_last_name ?? "",
+                email: this.user?.user_email ?? "",
+                roleId:  this.user?.user_roleId ?? 1, // Default to Standard User - this smells!
+                password: this.user?.user_password ?? "",
+                active:  this.user?.user_active ?? "yes", // new users will default to 'active'
                 errors: {} // This will be for input validation error messages
             }
         },
         methods: {
             onSubmit() {
-                const updatedUser = {
-                    id: this.id,
-                    firstName: this.firstName,
-                    lastName: this.lastName,
-                    email: this.email,
-                    roleId: this.roleId,
-                    password: this.password,
-                    active: this.active
-                }
-                this.$emit("user-updated", updatedUser);
+            
+                if(this.validate()){
                 
+                    const updatedUser = {
+                        id: this.id,
+                        firstName: this.firstName,
+                        lastName: this.lastName,
+                        email: this.email,
+                        roleId: this.roleId,
+                        password: this.password,
+                        active: this.active
+                    };
+
+                    this.$emit("user-updated", updatedUser);
+                }
             },
             handleCancel(){
                 this.$emit("user-form-cancelled");
@@ -81,6 +85,33 @@
             },
             handleActiveUpdate(user){
                 this.active = user.active;
+            },
+            validate() {
+
+            // clear our any error messages from the previous submit
+            this.errors = {};
+
+            if (!this.firstName) {
+                this.errors.firstName = "First name is required";
+            }
+
+            if (!this.lastName) {
+                this.errors.lastName = "Last name is required";
+            }
+
+            const emailRegExp = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+            if (!this.email) {
+                this.errors.email = "Email is required";
+            }else if(emailRegExp.test(this.email) == false){
+                this.errors.email = "The email address is not valid";
+            }
+
+            if (!this.password) {
+                this.errors.password = "Password is required";
+            }
+
+            // if there are no keys in the errors object, then everything is valid
+            return Object.keys(this.errors).length == 0;
             }
         }
     }

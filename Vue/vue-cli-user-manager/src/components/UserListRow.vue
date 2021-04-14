@@ -1,7 +1,7 @@
  <template>
         <tr>
-            <td>{{user.firstName + " " + user.lastName }}</td>
-            <td>{{user.email}}</td>
+            <td>{{user.user_first_name + " " + user.user_last_name }}</td>
+            <td>{{user.user_email}}</td>
             <td>
                 <role-drop-down :user="user" :roles="$root.userRoles" @user-updated="$emit('user-updated', $event)"/>
             </td>

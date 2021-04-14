@@ -16,8 +16,10 @@ const UserDataAccess = {
     },
     login(email, password){
         return ax.post("login/", {email,password});//.catch((error) => errorHandler("Error logging in" + error));
-    }
-    
+    },
+    getUserById(id){
+        return ax.get("users/" + id).catch((error) => errorHandler("Error getting user by id:" + error));
+    },
 }
 
 const RoleDataAccess = {
