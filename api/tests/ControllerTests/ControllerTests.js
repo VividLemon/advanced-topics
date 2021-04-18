@@ -9,8 +9,8 @@
         // users
         document.getElementById("btnGetAllUsers").addEventListener("click", () => {
             ax.get("users/")
-                .then(response => {
-                    console.log(response);
+                .then(resp => {
+                    console.log(resp);
                 })
                 .catch(err => {
                     console.log(err);
@@ -19,7 +19,7 @@
 
         document.getElementById("btnGetUserById").addEventListener("click", () => {
             ax.get("users/1")
-                .then(response => console.log(response.data))
+                .then(resp => console.log(resp.data))
                 .catch(err => console.log(err));
         });
 
@@ -28,7 +28,7 @@
             const user = {
                 user_first_name: "bill",
                 user_last_name: "Smith",
-                user_email: "bill@fffasdfsdfffll.com",
+                user_email: "bill@dfsdfffll.com",
                 user_role: 1,
                 user_password: "test",
                 user_salt: "",
@@ -36,8 +36,8 @@
             };
 
             ax.post("users/", user)
-                .then(response => console.log(response))
-                .catch(error => console.log(error));
+                .then(resp => console.log(resp))
+                .catch(err => console.log(err));
         });
 
         document.getElementById("btnPutUser").addEventListener("click", () => {
@@ -64,8 +64,8 @@
         // products
         document.getElementById("btnGetAllProducts").addEventListener("click", () => {
             ax.get("products/")
-                .then(response => {
-                    console.log(response);
+                .then(resp => {
+                    console.log(resp);
                 })
                 .catch(err => {
                     console.log(err);
@@ -74,7 +74,7 @@
 
         document.getElementById("btnGetProductById").addEventListener("click", () => {
             ax.get("products/1")
-                .then(response => console.log(response.data))
+                .then(resp => console.log(resp.data))
                 .catch(err => console.log(err));
         });
 
@@ -89,8 +89,8 @@
             };
 
             ax.post("products/", product)
-                .then(response => console.log(response))
-                .catch(error => console.log(error));
+                .then(resp => console.log(resp))
+                .catch(err => console.log(err));
         });
 
         document.getElementById("btnPutProduct").addEventListener("click", () => {
@@ -115,8 +115,8 @@
         // departments
         document.getElementById("btnGetAllDepartments").addEventListener("click", () => {
             ax.get("departments/")
-                .then(response => {
-                    console.log(response);
+                .then(resp => {
+                    console.log(resp);
                 })
                 .catch(err => {
                     console.log(err);
@@ -125,7 +125,7 @@
 
         document.getElementById("btnGetDepartmentById").addEventListener("click", () => {
             ax.get("departments/1")
-                .then(response => console.log(response.data))
+                .then(resp => console.log(resp.data))
                 .catch(err => console.log(err));
         });
 
@@ -139,8 +139,8 @@
             };
 
             ax.post("departments/", department)
-                .then(response => console.log(response))
-                .catch(error => console.log(error));
+                .then(resp => console.log(resp))
+                .catch(err => console.log(err));
         });
 
         document.getElementById("btnPutDepartment").addEventListener("click", () => {
@@ -163,8 +163,8 @@
         // employees
         document.getElementById("btnGetAllEmployees").addEventListener("click", () => {
             ax.get("employees/")
-                .then(response => {
-                    console.log(response);
+                .then(resp => {
+                    console.log(resp);
                 })
                 .catch(err => {
                     console.log(err);
@@ -173,7 +173,7 @@
 
         document.getElementById("btnGetEmployeeById").addEventListener("click", () => {
             ax.get("employees/1")
-                .then(response => console.log(response.data))
+                .then(resp => console.log(resp.data))
                 .catch(err => console.log(err));
         });
 
@@ -189,8 +189,8 @@
             };
 
             ax.post("employees/", Employee)
-                .then(response => console.log(response))
-                .catch(error => console.log(error));
+                .then(resp => console.log(resp))
+                .catch(err => console.log(err));
         });
 
         document.getElementById("btnPutEmployee").addEventListener("click", () => {
@@ -214,8 +214,8 @@
     // Roles
     document.getElementById("btnGetAllRoles").addEventListener("click", () => {
         ax.get("roles/")
-            .then(response => {
-                console.log(response);
+            .then(resp => {
+                console.log(resp);
             })
             .catch(err => {
                 console.log(err);
@@ -224,7 +224,7 @@
 
     document.getElementById("btnGetRoleById").addEventListener("click", () => {
         ax.get("roles/1")
-            .then(response => console.log(response.data))
+            .then(resp => console.log(resp.data))
             .catch(err => console.log(err));
     });
 
@@ -237,8 +237,8 @@
         };
 
         ax.post("roles/", Role)
-            .then(response => console.log(response))
-            .catch(error => console.log(error));
+            .then(resp => console.log(resp))
+            .catch(err => console.log(err));
     });
 
     document.getElementById("btnPutRole").addEventListener("click", () => {
@@ -261,8 +261,8 @@
     //Product Types
     document.getElementById("btnGetAllProductTypes").addEventListener("click", () => {
         ax.get("productTypes/")
-            .then(response => {
-                console.log(response);
+            .then(resp => {
+                console.log(resp);
             })
             .catch(err => {
                 console.log(err);
@@ -271,7 +271,7 @@
 
     document.getElementById("btnGetProductTypeById").addEventListener("click", () => {
         ax.get("productTypes/1")
-            .then(response => console.log(response.data))
+            .then(resp => console.log(resp.data))
             .catch(err => console.log(err));
     });
 
@@ -284,8 +284,8 @@
         };
 
         ax.post("productTypes/", productType)
-            .then(response => console.log(response))
-            .catch(error => console.log(error));
+            .then(resp => console.log(resp))
+            .catch(err => console.log(err));
     });
 
     document.getElementById("btnPutProductType").addEventListener("click", () => {
@@ -303,6 +303,37 @@
     document.getElementById("btnDeleteProductType").addEventListener("click", () => {
         const productTypeId = 1;
         ax.delete(`productTypes/${productTypeId}`).then(resp => console.log(resp)).catch(err => console.log(err));
+    });
+
+    // Images
+    document.getElementById('btnPostImage').addEventListener("click", () => {
+        const image = {
+            product_id: 1,
+            path: 'somepath',
+            active: 'yes'
+        }
+        ax.post("images/", image)
+            .then(resp => console.log(resp))
+            .catch(err => console.log(err));
+    });
+
+    document.getElementById('btnPutImage').addEventListener("click", () => {
+        const image = {
+            id: 1,
+            product_id: 2,
+            path: 'somepathupdate',
+            active: 'yes'
+        }
+        ax.put(`images/${image.id}`, image)
+            .then(resp => console.log(resp))
+            .catch(err => console.log(err));
+    });
+
+    document.getElementById('btnDeleteImage').addEventListener('click', () => {
+        const id = 6;
+        ax.delete(`images/${id}`)
+            .then(resp => console.log(resp))
+            .catch(err => console.log(err));
     });
 
 });

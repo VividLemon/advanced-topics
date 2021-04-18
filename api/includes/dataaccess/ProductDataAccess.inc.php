@@ -31,6 +31,7 @@ class ProductDataAccess extends DataAccess{
 	    	$row['product_price'] = mysqli_real_escape_string($this->link, $product->product_price);
 			$row['type_id'] = mysqli_real_escape_string($this->link, $product->type_id);
 			$row['active'] = mysqli_real_escape_string($this->link, $product->active);
+			$row['path'] = mysqli_real_escape_string($this->link, $product->path);
 			return $row;
 	    }
 
@@ -53,6 +54,9 @@ class ProductDataAccess extends DataAccess{
 			if(isset($row['active'])){
 				$product->active = htmlentities($row['active']);
 			}
+			if(isset($row['path'])){
+				$product->path = htmlentities($row['path']);
+			}
             return $product;
 	    }
 
@@ -63,8 +67,9 @@ class ProductDataAccess extends DataAccess{
 	    * @return {product}		Returns an instance of a model object 
 	    */
 	    function getById($id){
-            $qstr = "SELECT product_id as id, product_name, product_desc, product_price, type_id FROM products WHERE 
-			product_id = " . mysqli_real_escape_string($this->link, $id);
+            $qstr = "SELECT products.product_id as id, product_name, product_desc, product_price, type_id, group_concat(product_images.path) as path FROM products 
+			LEFT JOIN product_images ON products.product_id = product_images.product_id
+			WHERE products.product_id = " . mysqli_real_escape_string($this->link, $id);
             $result = mysqli_query($this->link, $qstr) or $this->handleError(mysqli_error($this->link));
             if($result->num_rows == 1){
                 $row = mysqli_fetch_assoc($result);
@@ -83,8 +88,10 @@ class ProductDataAccess extends DataAccess{
 	    * @return {array}		Returns an array of model objects
 	    */
 	    function getAll($args = []){
-            $qstr = "SELECT product_id as id, product_name, product_desc, product_price, type_id FROM products
-			WHERE active = 'yes'";
+            $qstr = "SELECT products.product_id as id, product_name, product_desc, product_price, type_id, group_concat(product_images.path) as path FROM products
+			LEFT JOIN product_images ON products.product_id = product_images.product_id
+			WHERE products.active = 'yes'
+			GROUP BY products.product_id";
             $result = mysqli_query($this->link, $qstr) or $this->handleError(mysqli_error($this->link));
 			$all = array();
             while($row = mysqli_fetch_assoc($result)){
@@ -183,5 +190,6 @@ class ProductDataAccess extends DataAccess{
 	    function delete($id){
 	    	// should we really delete a row?
 	    	// it can get super tricky when there are foreign keys!
+			
 	    }
 }

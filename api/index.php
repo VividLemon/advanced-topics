@@ -30,7 +30,9 @@ $routes = [
 	"productTypes/" => ["controller" => "ProductTypeController", "action" => "handle_product_types"],
 	"productTypes/:id" => ["controller" => "ProductTypeController", "action" => "handle_single_product_type"],
 	"login" => ["controller" => "LoginController", "action" => "handleLogin"],
-	"logout" => ["controller" => "LoginController", "action" => "handleLogout"]
+	"logout" => ["controller" => "LoginController", "action" => "handleLogout"],
+	"images" => ["controller" => "ProductImageController", "action" => "handle_product_images"],
+	"images/:id" => ["controller" => "ProductImageController", "action" => "handle_single_image"]
 ];
 
 $router = new Router($routes);

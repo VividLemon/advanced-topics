@@ -2,7 +2,7 @@
 include_once("Model.inc.php");
 include_once("config.inc.php");
 
-class Product extends Model
+class Product_image extends Model
 {
 
 	
@@ -18,12 +18,9 @@ class Product extends Model
 
 	public function __construct(
         public int $id = 0,
-        public string $product_name = "",
-        public string $product_desc = "",
-		public int $product_price = 0,
-		public int $type_id = 0,
-		public string $active = "yes",
-		public string $path = "",
+        public int $product_id = 0,
+        public string $path = '',
+		public string $active = 'yes',
     ) {
 
 	}
@@ -51,33 +48,19 @@ class Product extends Model
 			$this->validationErrors['id'] = "ID is not valid";
 		}
 
-        if(empty($this->product_name)){
+        if(!($this->product_id >= 0)){
             $valid = false;
-            $this->validationErrors['name'] = "Product name is required";
-        }else if(strlen($this->product_name) > NAME_LENGTH){
-			"Name must be less than " . NAME_LENGTH . " characters";
-		}
+            $this->validationErrors['product_id'] = "Product ID is not valid";
+        }
 
-        if(empty($this->product_desc)){
+        if(empty($this->path)){
             $valid = false;
-            $this->validationErrors['desc'] = "Product description is required";
-        }else if(strlen($this->product_desc) > DESC_LENGTH){
-			"Description must be less than " . DESC_LENGTH . " characters";
-		}
-
-        if(empty($this->product_price)){
+            $this->validationErrors['path'] = "The product path is not valid";
+        }else if(strlen($this->path) > 255){
             $valid = false;
-            $this->validationErrors['price'] = "Product price is required";
-        }else if(strlen($this->product_price) < 0){
-			$valid = false; 
-			$this->validationErrors['price'] = "Product price must be greater than 0";
-		}
-
-		if(!($this->type_id >= 0)){
-			$valid = false;
-			$this->validationErrors['type_id'] = "There must be a valid type id";
-		}
-
+            $this->validationErrors['path'] = "The path must be less than 255 characters";
+        }
+		
 		if($this->active != "yes" && $this->active != "no"){
 			$valid = false;
 			$this->validationErrors['active'] = "Active must be either 'yes' or 'no'";

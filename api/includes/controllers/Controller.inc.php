@@ -4,6 +4,7 @@ class Controller {
 
 	// a link to the database
 	protected $link;
+	public string $default_unauthorized = "Only admins can use this function";
 	
 
 	function __construct($link){
@@ -118,6 +119,35 @@ class Controller {
 		header("Access-Control-Allow-Origin: $domain");
 		// You could also allow only certain headers to be sent in CORS requests   
 		header("Access-Control-Allow-Headers: *");  
+	}
+
+	
+	// Methods to secure the users data...
+	function isAdmin(){
+
+		$admin_role_id = 2; // the role id (in the user_roles table) for admins
+
+		if(isset($_SESSION['user_roleId']) && $_SESSION['user_roleId'] == $admin_role_id){
+			return true;
+		}
+
+		return false;
+	}
+
+	function isLoggedIn(){
+		if(isset($_SESSION['authenticated']) && $_SESSION['authenticated'] == "yes"){
+			return true;
+		}
+
+		return false;
+	}
+
+	function isOwner($userId){
+		if(isset($_SESSION['id']) && $_SESSION['id'] == $userId){
+			return true;
+		}
+
+		return false;
 	}
 
 }

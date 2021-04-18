@@ -28,38 +28,50 @@ class UserController extends Controller{
 		switch($_SERVER['REQUEST_METHOD']){
 			case "POST":
 				// start off with just this inside this braanch
-				$data = $this->getJSONRequestBody();
-
-				$user = $da->convertRowToModel($data);
-				if($user->isValid()){
-					try{
-						$user = $da->insert($user);
-						$json = json_encode($user);
-
-						$this->setContentType('json');
-						$this->sendHeader(200);
-						$this->allowCors();
-
-						echo $json;
-						die();
-					}catch(Exception $e){
-						$this->sendHeader(500,true, $e->getMessage());
-					}
-				}else{
-					$msg = implode(', ', array_values($user->validationErrors));
-					$this->sendHeader(400, true, $msg);
+				if(!$this->isAdmin()){
+					$this->sendHeader(401, msg: $this->default_unauthorized);
 					die();
+				}else{
+
+					$data = $this->getJSONRequestBody();
+
+					$user = $da->convertRowToModel($data);
+					if($user->isValid()){
+						try{
+							$user = $da->insert($user);
+							$json = json_encode($user);
+
+							$this->setContentType('json');
+							$this->sendHeader(200);
+							$this->allowCors();
+
+							echo $json;
+							die();
+						}catch(Exception $e){
+							$this->sendHeader(500,true, $e->getMessage());
+						}
+					}else{
+						$msg = implode(', ', array_values($user->validationErrors));
+						$this->sendHeader(400, true, $msg);
+						die();
+					}
 				}
 				break;
 			case "GET":
-				$users = $da->getAll();
-				$jsonUsers = json_encode($users, JSON_PRETTY_PRINT);
-				$this->setContentType("json");
-				$this->sendHeader(200);
-				$this->allowCors();
+				if(!$this->isAdmin()){
+					$this->sendHeader(401, msg: $this->default_unauthorized);
+					die();
+				}else{
+					$users = $da->getAll();
+					$jsonUsers = json_encode($users, JSON_PRETTY_PRINT);
+					$this->setContentType("json");
+					$this->sendHeader(200);
+					$this->allowCors();
 
-				echo($jsonUsers);
-				die();
+					echo($jsonUsers);
+					die();
+				}
+				
 				break;
 			case "OPTIONS":
 				// AJAX CALLS WILL OFTEN SEND AN OPTIONS REQUEST BEFORE A PUT OR DELETE
@@ -92,20 +104,26 @@ class UserController extends Controller{
 
 		switch($_SERVER['REQUEST_METHOD']){
 			case "GET":
-				//echo("GET USER $id");
-				$user = $da->getById($id);
-				$json = json_encode($user, JSON_PRETTY_PRINT);
-				$this->setContentType("json");
-				$this->sendHeader(200);
-				echo $json;
-				die();
+				if(!$this->isAdmin() && !$this->isOwner($id)){
+					$this->sendHeader(401, msg: $this->default_unauthorized);
+					die();
+				}else{
+					//echo("GET USER $id");
+					$user = $da->getById($id);
+					$json = json_encode($user, JSON_PRETTY_PRINT);
+					$this->setContentType("json");
+					$this->sendHeader(200);
+					echo $json;
+					die();
+				}
+				
 				break;
 			case "PUT":
 				$data = $this->getJSONRequestBody();
 				$user = $da->convertRowToModel($data);
 				if($user->isValid()){
 					try{
-						if($da->update($user)){
+						if($da->update($user, true)){
 							$json = json_encode($user);
 							$this->setContentType('json');
 							$this->sendHeader(200);
@@ -122,17 +140,22 @@ class UserController extends Controller{
 				}
 				break;
 			case "DELETE":
-				if($user = $da->getById($id)){
-					try{
-						$user->user_active = "no";
-						$da->update($user, delete: true);
-						$this->sendHeader(200);
-					}catch(Exception $e){
-						$this->sendHeader(400, true, $e->getMessage());
-					}
+				if(!$this->isAdmin()){
+					$this->sendHeader(401, msg: $this->default_unauthorized);
 					die();
 				}else{
-					$this->sendHeader(400, msg: "Unable to delete user, id: $id");
+					if($user = $da->getById($id)){
+						try{
+							$user->user_active = "no";
+							$da->update($user, delete: true);
+							$this->sendHeader(200);
+						}catch(Exception $e){
+							$this->sendHeader(400, true, $e->getMessage());
+						}
+						die();
+					}else{
+						$this->sendHeader(400, msg: "Unable to delete user, id: $id");
+					}
 				}
 				break;
 			case "OPTIONS":

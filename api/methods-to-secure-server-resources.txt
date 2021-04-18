@@ -1,0 +1,28 @@
+
+	// Methods to secure the users data...
+	function isAdmin(){
+
+		$admin_role_id = 2; // the role id (in the user_roles table) for admins
+
+		if(isset($_SESSION['user_role_id']) && $_SESSION['user_role_id'] == $admin_role_id){
+			return true;
+		}
+
+		return false;
+	}
+
+	function isLoggedIn(){
+		if(isset($_SESSION['authenticated']) && $_SESSION['authenticated'] == "yes"){
+			return true;
+		}
+
+		return false;
+	}
+
+	function isOwner($userId){
+		if(isset($_SESSION['user_id']) && $_SESSION['user_id'] == $userId){
+			return true;
+		}
+
+		return false;
+	}
