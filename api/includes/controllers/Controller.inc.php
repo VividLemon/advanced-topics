@@ -127,7 +127,7 @@ class Controller {
 
 		$admin_role_id = 2; // the role id (in the user_roles table) for admins
 
-		if(isset($_SESSION['user_roleId']) && $_SESSION['user_roleId'] == $admin_role_id){
+		if(isset($_SESSION['user_role_id']) && $_SESSION['user_role_id'] == $admin_role_id){
 			return true;
 		}
 
@@ -143,7 +143,7 @@ class Controller {
 	}
 
 	function isOwner($userId){
-		if(isset($_SESSION['id']) && $_SESSION['id'] == $userId){
+		if(isset($_SESSION['user_id']) && $_SESSION['user_id'] == $userId){
 			return true;
 		}
 

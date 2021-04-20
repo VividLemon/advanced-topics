@@ -41,6 +41,8 @@ class LoginController extends Controller{
 						$json = json_encode($user, JSON_PRETTY_PRINT);
 						//create new sessionId
 						session_regenerate_id();
+						$sess_id = session_id();
+						Header("x-id: $sess_id");
 						$_SESSION['authenticated'] = "yes";
 						$_SESSION['user_id'] = $user->id;
 						$_SESSION['user_role_id'] = $user->user_roleId;

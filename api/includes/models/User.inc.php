@@ -6,7 +6,7 @@ class User extends Model
 {
 
 	// INSTANCE VARIABLES
-
+	
 
 	
 	/**

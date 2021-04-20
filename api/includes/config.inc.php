@@ -23,13 +23,13 @@ if($_SERVER['SERVER_NAME'] == "localhost"){
 	// you may want to set DEBUG_MODE to true when you 
 	// are first setting up your live site, but once you get
 	// everything working you'd want it off.
-	define("DB_HOST", "?????");
-	define("DB_USER", "?????");
-	define("DB_PASSWORD", "?????");
-	define("DB_NAME", "?????");
-	define("SITE_ADMIN_EMAIL", "?????");
+	define("DB_HOST", "localhost");
+	define("DB_USER", "kwijelco_adv_topics3335947");
+	define("DB_PASSWORD", "vFX9xWgmWDcFzdscCUkk3Jma");
+	define("DB_NAME", "kwijelco_adv_topics_final_project");
+	define("SITE_ADMIN_EMAIL", "copseyi@students.westerntc.edu");
 	define("SITE_DOMAIN", $_SERVER['SERVER_NAME']);
-	define("PROJECT_DIR", "?????");
+	define("PROJECT_DIR", "/api/");
 	define("UPLOAD_DIR", $_SERVER['DOCUMENT_ROOT'] . PROJECT_DIR . "uploads/");
 }
 

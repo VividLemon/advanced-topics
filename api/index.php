@@ -1,5 +1,18 @@
 <?php
-session_start(); // we'll use sessions to securing resources, although I'm not sure we should
+//session_start(); // we'll use sessions to securing resources, although I'm not sure we should
+// In order for axios to see the x-id header we need to 'expose it' by sending this header!
+header("Access-Control-Expose-Headers: x-id"); 
+
+$headers = getallheaders();
+if(isset($headers['x-id'])){
+	// this x-id header will have the current session id in it
+	// and we can restore the session by passing the id into session_id()
+	// (make sure this happens before calling session_start())
+	session_id($headers['x-id']);
+}
+session_start();
+
+
 
 // We need to discuss URL rewriting before we do this
 
@@ -13,7 +26,7 @@ $url_path = $_GET['url_path'] ?? "";
 //die($url_path);
 
 if($url_path == ""){
-	die("show the api documentation page");
+	die();
 }
 
 $routes = [
