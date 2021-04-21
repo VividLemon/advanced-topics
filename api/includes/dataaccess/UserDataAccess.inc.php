@@ -77,7 +77,7 @@ class UserDataAccess extends DataAccess{
 		$u->user_first_name = htmlentities($row['user_first_name']);
 		$u->user_last_name = htmlentities($row['user_last_name']);
 		$u->user_email = htmlentities($row['user_email']);
-		$u->user_roleId = htmlentities($row['user_role_id']);
+		$u->user_role_id = htmlentities($row['user_role_id']);
 		$u->user_password = htmlentities($row['user_password']);
 		$u->user_salt = htmlentities($row['user_salt']);
 		$u->user_active = htmlentities($row['user_active']);
@@ -288,7 +288,7 @@ class UserDataAccess extends DataAccess{
 					user_first_name, 
 					user_last_name, 
 					user_email, 
-					user_role, 
+					user_role as user_role_id, 
 					user_salt, 
 					user_password, 
 					user_active

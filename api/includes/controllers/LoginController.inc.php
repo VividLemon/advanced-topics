@@ -45,7 +45,7 @@ class LoginController extends Controller{
 						Header("x-id: $sess_id");
 						$_SESSION['authenticated'] = "yes";
 						$_SESSION['user_id'] = $user->id;
-						$_SESSION['user_role_id'] = $user->user_roleId;
+						$_SESSION['user_role_id'] = $user->user_role_id;
 						$_SESSION['user_first_name'] = $user->user_first_name;
 						$this->setContentType("json");
 						$this->sendHeader(200);

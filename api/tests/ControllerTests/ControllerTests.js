@@ -108,8 +108,8 @@
         });
 
         document.getElementById("btnDeleteProduct").addEventListener("click", () => {
-            const departmentId = 1;
-            ax.delete(`products/${departmentId}`).then(resp => console.log(resp)).catch(err => console.log(err));
+            const productId = 1;
+            ax.delete(`products/${productId}`).then(resp => console.log(resp)).catch(err => console.log(err));
         });
 
         // departments
