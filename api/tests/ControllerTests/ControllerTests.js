@@ -26,10 +26,10 @@
         document.getElementById("btnPostUser").addEventListener("click", () => {
 
             const user = {
-                user_first_name: "bill",
-                user_last_name: "Smith",
-                user_email: "bill@dfsdfffll.com",
-                user_role: 1,
+                user_first_name: "Jane",
+                user_last_name: "doe",
+                user_email: "Jane@doe.com",
+                user_role: 2,
                 user_password: "test",
                 user_salt: "",
                 user_active: "yes"
@@ -43,12 +43,11 @@
         document.getElementById("btnPutUser").addEventListener("click", () => {
             const user = {
                 id: 1,
-                user_first_name: "Bill",
-                user_last_name: "Joe",
-                user_email: "Bil@ffaasfffffsldoe.com",
-                user_role: 1,
+                user_first_name: "Jane",
+                user_last_name: "Doe",
+                user_email: "Jane@doe.com",
+                user_role: 2,
                 user_password: "test",
-                user_salt: "",
                 user_active: "yes"
             };
             ax.put(`users/${user.id}`, user)

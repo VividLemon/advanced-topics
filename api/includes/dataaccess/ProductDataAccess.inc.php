@@ -3,7 +3,7 @@
 // You may want to replace all occurences of product and $product with what ever model you are working with
 
 require_once("DataAccess.inc.php");
-include_once(__DIR__ . "/../models/product.inc.php"); // I had problems including this file, not sure why!
+include_once(__DIR__ . "/../models/Product.inc.php"); // I had problems including this file, not sure why!
 
 
 class ProductDataAccess extends DataAccess{

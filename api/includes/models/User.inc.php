@@ -20,7 +20,7 @@ class User extends Model
 		public string $user_first_name = "",
 		public string $user_last_name = "",
 		public string $user_email = "",
-		public int $user_roleId = 0,
+		public int $user_role_id = 0,
 		public string $user_password = "",
 		public string $user_salt = "",
 		public string $user_active = "",
@@ -80,7 +80,7 @@ class User extends Model
 		}
 
 		// role id should be a number greater than zero
-		if (!$this->user_roleId > 0) {
+		if (!($this->user_role_id > 0)) {
 			$valid = false;
 			$this->validationErrors['user_roleId'] = "Role id is not valid";
 		}

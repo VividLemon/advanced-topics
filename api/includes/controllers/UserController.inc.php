@@ -28,10 +28,7 @@ class UserController extends Controller{
 		switch($_SERVER['REQUEST_METHOD']){
 			case "POST":
 				// start off with just this inside this braanch
-				if(!$this->isAdmin()){
-					$this->sendHeader(401, msg: $this->default_unauthorized);
-					die();
-				}else{
+				
 
 					$data = $this->getJSONRequestBody();
 
@@ -55,13 +52,10 @@ class UserController extends Controller{
 						$this->sendHeader(400, true, $msg);
 						die();
 					}
-				}
+				
 				break;
 			case "GET":
-				if(!$this->isAdmin()){
-					$this->sendHeader(401, msg: $this->default_unauthorized);
-					die();
-				}else{
+			
 					$users = $da->getAll();
 					$jsonUsers = json_encode($users, JSON_PRETTY_PRINT);
 					$this->setContentType("json");
@@ -70,7 +64,7 @@ class UserController extends Controller{
 
 					echo($jsonUsers);
 					die();
-				}
+			
 				
 				break;
 			case "OPTIONS":
@@ -104,10 +98,7 @@ class UserController extends Controller{
 
 		switch($_SERVER['REQUEST_METHOD']){
 			case "GET":
-				if(!$this->isAdmin() && !$this->isOwner($id)){
-					$this->sendHeader(401, msg: $this->default_unauthorized);
-					die();
-				}else{
+			
 					//echo("GET USER $id");
 					$user = $da->getById($id);
 					$json = json_encode($user, JSON_PRETTY_PRINT);
@@ -115,7 +106,7 @@ class UserController extends Controller{
 					$this->sendHeader(200);
 					echo $json;
 					die();
-				}
+				
 				
 				break;
 			case "PUT":
@@ -140,10 +131,7 @@ class UserController extends Controller{
 				}
 				break;
 			case "DELETE":
-				if(!$this->isAdmin()){
-					$this->sendHeader(401, msg: $this->default_unauthorized);
-					die();
-				}else{
+				
 					if($user = $da->getById($id)){
 						try{
 							$user->user_active = "no";
@@ -156,7 +144,7 @@ class UserController extends Controller{
 					}else{
 						$this->sendHeader(400, msg: "Unable to delete user, id: $id");
 					}
-				}
+				
 				break;
 			case "OPTIONS":
 				// AJAX CALLS WILL OFTEN SEND AN OPTIONS REQUEST BEFORE A PUT OR DELETE

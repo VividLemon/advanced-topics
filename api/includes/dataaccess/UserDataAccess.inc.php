@@ -51,7 +51,7 @@ class UserDataAccess extends DataAccess{
 		$row['user_first_name'] = mysqli_real_escape_string($this->link, $user->user_first_name);
 		$row['user_last_name'] = mysqli_real_escape_string($this->link, $user->user_last_name);
 		$row['user_email'] = mysqli_real_escape_string($this->link, $user->user_email);
-		$row['user_role'] = mysqli_real_escape_string($this->link, $user->user_roleId);
+		$row['user_role'] = mysqli_real_escape_string($this->link, $user->user_role_id);
 		$row['user_password'] = mysqli_real_escape_string($this->link, $user->user_password);
 		$row['user_salt'] = mysqli_real_escape_string($this->link, $user->user_salt);
 		$row['user_active'] = mysqli_real_escape_string($this->link, $user->user_active);
@@ -96,7 +96,7 @@ class UserDataAccess extends DataAccess{
 		
 		// Write a SQL query to select the id, first name, last name, and email address of every user in the users table
 		$qStr = "SELECT
-		            user_id as id, user_first_name, user_last_name, user_email, user_password, user_salt, user_role, user_active
+		            user_id as id, user_first_name, user_last_name, user_email, user_password, user_salt, user_role as user_role_id, user_active
 		        FROM users 
 				WHERE user_active = 'yes'";
 		    
